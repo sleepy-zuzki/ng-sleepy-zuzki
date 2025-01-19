@@ -1,0 +1,130 @@
+#main {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.avatar_container {
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+
+.avatar {
+  width: 400px;
+  height: 400px;
+}
+
+.about_container {
+  max-width: 1000px;
+  margin: 0 auto;
+  height: auto;
+  text-align: center;
+}
+
+#socials {
+  margin: 50px auto 0;
+  max-width: 1000px;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+.social {
+  width: 20%;
+  padding:  10px;
+  border-radius: 5px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.social__twitter {
+  color: #000000;
+  background: #ffffff;
+  box-shadow: var(--wa-shadow-l);
+}
+
+.social__youtube {
+  color: #ff0000;
+  background: #ffffff;
+  box-shadow: var(--wa-shadow-l);
+}
+
+.social__discord {
+  color: #5865f2;
+  background: #ffffff;
+  box-shadow: var(--wa-shadow-l);
+}
+
+.social__twitch {
+  color: #9146ff;
+  background: #ffffff;
+  box-shadow: var(--wa-shadow-l);
+}
+
+wa-icon {
+  --primary-color: rgb(217 119 6);
+  --secondary-color: rgb(251 191 36);
+}
+
+wa-button {
+  --background-color: rgb(180 83 9);
+}
+
+@media (width <= 920px) {
+  .avatar {
+    width: 400px;
+  }
+}
+
+@media (width <= 425px) {
+  .avatar {
+    width: 300px;
+  }
+}
+
+@media (width <= 375px) {
+  .avatar {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+.link {
+  font-weight: bold;
+  @apply text-amber-800;
+}
+
+.link_container {
+  margin-left: 30px;
+  padding: 5px 10px;
+  text-decoration: none;
+}
+
+.link_container:hover {
+  border-radius: 5px;
+  @apply bg-amber-700;
+
+  .link {
+    @apply text-amber-300;
+  }
+}
+
+.projects_container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  gap: 50px;
+}
+
+
