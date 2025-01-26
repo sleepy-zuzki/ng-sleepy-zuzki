@@ -14,7 +14,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-*, html{
+*, htmld{
   scroll-behavior: smooth;
 }
 
@@ -22,4 +22,21 @@ html,
 body {
   padding: 0;
   margin: 0;
+}
+
+wa-icon {
+  --primary-color: rgb(217 119 6);
+  --secondary-color: rgb(251 191 36);
+}
+
+wa-button {
+  --background-color: rgb(180 83 9);
+}
+
+@font-face {
+  font-family: 'Wallpoet';
+  src: url('https://assets.zuzki.dev/fonts/Wallpoet-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }

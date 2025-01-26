@@ -1,0 +1,52 @@
+<section id='navbar' class="wa-split w-full flex flex-col items-center lg:flex-row">
+  <a routerLink='/' routerLinkActive="active" ariaCurrentWhenActive="page" class='"wa-split-item w-[11%]'>
+    <wa-icon family='duotone' name="code" class="text-4xl align-middle"></wa-icon>
+    <h1 id="brand-name" class="wa-heading-s wa-desktop-only inline-block align-middle text-2xl font-bold">
+      Sleepy Zuzki
+    </h1>
+  </a>
+
+  <div class="text-sm md:text-lg flex justify-between w-[89%]">
+    <div class="links flex flex-col items-center lg:flex-row">
+      <a class='link_container' routerLink='/overlays' routerLinkActive="active" ariaCurrentWhenActive="page">
+        <span class='link'>
+          Overlays
+        </span>
+      </a>
+    </div>
+
+    <div class="drawer">
+      @if (currentPath !== '/') {
+        <wa-drawer #drawer label="Vistas" with-header with-footer class="drawer-overview">
+          <main>
+            <wa-card with-image class="card-body">
+              <img src="https://assets.zuzki.dev/kirarye_layout.webp" height="100" slot="image" alt="Placeholder"/>
+              <p><b>Just Chatting</b></p>
+            </wa-card>
+
+            <wa-card with-image class="card-body">
+              <img src="https://assets.zuzki.dev/kirarye_layout.webp" height="100" slot="image" alt="Placeholder"/>
+              <p><b>Just Chatting</b></p>
+            </wa-card>
+
+            <wa-card with-image class="card-body">
+              <img src="https://assets.zuzki.dev/kirarye_layout.webp" height="100" slot="image" alt="Placeholder"/>
+              <p><b>Just Chatting</b></p>
+            </wa-card>
+
+            <wa-card with-image class="card-body">
+              <img src="https://assets.zuzki.dev/kirarye_layout.webp" height="100" slot="image" alt="Placeholder"/>
+              <p><b>Just Chatting</b></p>
+            </wa-card>
+          </main>
+
+          <wa-button slot="footer" variant="brand" data-drawer="close">Close</wa-button>
+        </wa-drawer>
+
+        <wa-button (click)="openDrawer()">
+          <wa-icon family="classic" name="bars" variant="regular"></wa-icon>
+        </wa-button>
+      }
+    </div>
+  </div>
+</section>

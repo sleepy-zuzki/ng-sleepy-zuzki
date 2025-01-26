@@ -1,0 +1,29 @@
+.avatar_container {
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+
+#socials {
+  margin: 50px auto 0;
+  max-width: 1000px;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+.projects_container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  gap: 50px;
+}
