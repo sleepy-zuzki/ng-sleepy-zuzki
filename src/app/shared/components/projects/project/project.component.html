@@ -1,18 +1,24 @@
-<wa-card with-image with-footer class="card-overview w-full md:w-2/5 lg:w-1/3">
-  <img slot='image' src='https://assets.zuzki.dev/portfolio_page.webp' alt='some project' width='300px' height='200px'/>
-  <p>Projecto realizado con</p>
-  <wa-tooltip for='angular'>Angular</wa-tooltip>
-  <wa-icon id='angular' family='brands' name='angular' class="text-2xl align-middle" style="color: #b52e31"></wa-icon>
+<wa-card with-image with-footer class="card-overview">
+  <img slot='image'
+       [src]="project().screenshot?.formats?.thumbnail?.url || ''"
+       alt='some project'
+       width="{{project().screenshot?.width}}"
+       height="{{ project().screenshot?.height }}"/>
+  <p>{{ project().label }}</p>
 
-  <wa-tooltip for='web-awesome'>Angular</wa-tooltip>
-  <wa-icon id='angular' family='brands' name='web-awesome' class="text-2xl align-middle" style="color: #f36944"></wa-icon>
+  <div class="icons">
+    @for (tech of project().techs; track tech.id) {
+      <wa-tooltip for="{{tech.icon_name}}">{{ tech.label }}</wa-tooltip>
+      <wa-icon id="{{tech.id}}" family="{{tech.family}}" name="{{tech.icon_name}}" class="text-2xl align-middle" style="{{'color: ' + tech.color}}"></wa-icon>
+    }
+  </div>
 
   <div slot='footer'>
-    <wa-button href={pageLink} target='_blank'>
+    <wa-button href="{{ project().url }}" target='_blank'>
       <wa-icon slot='prefix' name='arrow-up-right-from-square' variant='duotone'></wa-icon>
       Ir
     </wa-button>
-    <wa-button href={pageRepo} target='_blank'>
+    <wa-button href="{{ project().repository }}" target='_blank'>
       <wa-icon slot='prefix' name='github' family='brands'></wa-icon>
       Repo
     </wa-button>

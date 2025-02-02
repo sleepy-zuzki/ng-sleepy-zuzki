@@ -1,0 +1,42 @@
+<wa-page>
+  <app-header slot="header" class="wa-body-s shadow-sm"></app-header>
+
+  <main class="w-full flex justify-evenly flex-wrap max-w-[1000px] px-1.5 m-auto">
+    @for (overlay of overlays(); track overlay.id) {
+      <wa-card with-image with-footer with-header class="card-overview">
+        <img src="{{ overlay.screenshot?.formats?.thumbnail?.url }}" alt="Kirarye's Layout" class="rounded" slot="image"/>
+
+        <div slot="header">
+          <b>{{ overlay.streamer }}'s Layout</b>
+        </div>
+
+
+        <div class="tags">
+          @for (tag of overlay.creators; track tag.id) {
+            <a [href]="tag.socials" target="_blank">
+              <wa-tag variant="{{ tag.variant }}" appearance="{{ tag.appearance }}">{{ tag.label }}</wa-tag>
+            </a>
+          }
+        </div>
+
+        <div slot="footer" class="flex justify-center">
+          <a routerLink="/overlays/kirarye" routerLinkActive="active" ariaCurrentWhenActive="page" >
+            <wa-button variant="brand" pill>Ver overlay</wa-button>
+          </a>
+        </div>
+      </wa-card>
+
+    } @empty {
+      <app-skeleton/>
+      <app-skeleton/>
+      <app-skeleton/>
+      <app-skeleton/>
+      <app-skeleton/>
+      <app-skeleton/>
+      <app-skeleton/>
+      <app-skeleton/>
+      <app-skeleton/>
+      <app-skeleton/>
+    }
+  </main>
+</wa-page>

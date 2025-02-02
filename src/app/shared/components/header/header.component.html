@@ -16,7 +16,7 @@
     </div>
 
     <div class="drawer">
-      @if (currentPath !== '/') {
+      @if (showDrawer()) {
         <wa-drawer #drawer label="Vistas" with-header with-footer class="drawer-overview">
           <main>
             <wa-card with-image class="card-body">

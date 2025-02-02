@@ -1,5 +1,11 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, ViewChild } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  signal,
+  ViewChild, WritableSignal
+} from '@angular/core';
+import { NavigationStart, Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -13,9 +19,23 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class HeaderComponent {
   @ViewChild('drawer') drawer?: ElementRef;
-  currentPath: string = '/overlays'
+  readonly showDrawer: WritableSignal<boolean> = signal(true);
 
-  constructor(private elementRef: ElementRef) {}
+  constructor(private router: Router) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        switch(event.url) {
+          case '/':
+          case '/overlays':
+            this.showDrawer.set(false);
+            break;
+          default:
+            this.showDrawer.set(true);
+            break;
+        }
+      }
+    })
+  }
 
   openDrawer(): void {
     if (this.drawer) {

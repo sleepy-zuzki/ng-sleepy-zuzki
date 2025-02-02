@@ -1,2 +1,7 @@
-
-<app-project/>
+@for (project of projects(); track project.id) {
+  <app-project [project]="project"/>
+} @empty {
+  <app-skeleton/>
+  <app-skeleton/>
+  <app-skeleton/>
+}

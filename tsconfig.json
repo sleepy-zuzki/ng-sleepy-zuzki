@@ -21,9 +21,13 @@
     "paths": {
       "@components/*": ["app/shared/components/*"],
       "@directives/*": ["app/shared/directives/*"],
+      "@services/*": ["app/shared/services/*"],
+      "@interceptors/*": ["app/shared/interceptors/*"],
       "@pipes/*": ["app/shared/pipes/*"],
       "@core/*": ["app/core/*"],
-      "@features/*": ["app/features/*"]
+      "@features/*": ["app/features/*"],
+      "@pages/*": ["app/pages/*"],
+      "@env/*": ["environments/*"],
     }
   },
   "angularCompilerOptions": {

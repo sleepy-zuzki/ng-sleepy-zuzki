@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { LandingComponent } from '@components/landing/landing.component';
-import { OverlaysComponent } from '@components/overlays/overlays.component';
-import { KiraryeComponent } from '@components/overlays/overlay/kirarye/kirarye.component';
+import { LandingComponent } from '@pages/landing/landing.component';
+import { OverlaysComponent } from '@pages/overlays/overlays.component';
+import { KiraryeComponent } from '@pages/overlays/overlay/kirarye/kirarye.component';
 
 export const routes: Routes = [
   { path: 'overlays', component: OverlaysComponent },
