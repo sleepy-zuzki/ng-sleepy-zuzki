@@ -14,6 +14,7 @@ export interface Datum {
   screenshot?:  ImageDoc;
   creators?:  any[];
   url?: string;
+  views?: any[];
   repository?: string;
   techs?:       any;
   createdAt?:   Date;

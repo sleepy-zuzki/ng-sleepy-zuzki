@@ -1,11 +1,10 @@
 import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
-  signal,
-  ViewChild, WritableSignal
+  ElementRef, input, InputSignal,
+  ViewChild
 } from '@angular/core';
-import { NavigationStart, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -19,27 +18,12 @@ import { NavigationStart, Router, RouterLink, RouterLinkActive } from '@angular/
 })
 export class HeaderComponent {
   @ViewChild('drawer') drawer?: ElementRef;
-  readonly showDrawer: WritableSignal<boolean> = signal(true);
 
-  constructor(private router: Router) {
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        switch(event.url) {
-          case '/':
-          case '/overlays':
-            this.showDrawer.set(false);
-            break;
-          default:
-            this.showDrawer.set(true);
-            break;
-        }
-      }
-    })
-  }
+  readonly views: InputSignal<any[]> = input<any[]>([]);
 
   openDrawer(): void {
     if (this.drawer) {
-      this.drawer.nativeElement.open = true
+      this.drawer.nativeElement.open = true;
     }
   }
 }

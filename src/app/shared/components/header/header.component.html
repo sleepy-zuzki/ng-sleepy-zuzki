@@ -16,36 +16,23 @@
     </div>
 
     <div class="drawer">
-      @if (showDrawer()) {
-        <wa-drawer #drawer label="Vistas" with-header with-footer class="drawer-overview">
-          <main>
-            <wa-card with-image class="card-body">
-              <img src="https://assets.zuzki.dev/kirarye_layout.webp" height="100" slot="image" alt="Placeholder"/>
-              <p><b>Just Chatting</b></p>
-            </wa-card>
+      @if (views().length > 0) {
+          <wa-drawer #drawer label="Vistas" with-header with-footer class="drawer-overview">
+            <main>
+              @for (view of views(); track view.id) {
+                <wa-card with-image class="card-body">
+                  <img src="{{ view.thumbnail?.formats.thumbnail.url }}" height="100" slot="image" alt="Placeholder"/>
+                  <p><b>{{ view.type }}</b></p>
+                </wa-card>
+              }
+            </main>
 
-            <wa-card with-image class="card-body">
-              <img src="https://assets.zuzki.dev/kirarye_layout.webp" height="100" slot="image" alt="Placeholder"/>
-              <p><b>Just Chatting</b></p>
-            </wa-card>
+            <wa-button slot="footer" variant="brand" data-drawer="close">Close</wa-button>
+          </wa-drawer>
 
-            <wa-card with-image class="card-body">
-              <img src="https://assets.zuzki.dev/kirarye_layout.webp" height="100" slot="image" alt="Placeholder"/>
-              <p><b>Just Chatting</b></p>
-            </wa-card>
-
-            <wa-card with-image class="card-body">
-              <img src="https://assets.zuzki.dev/kirarye_layout.webp" height="100" slot="image" alt="Placeholder"/>
-              <p><b>Just Chatting</b></p>
-            </wa-card>
-          </main>
-
-          <wa-button slot="footer" variant="brand" data-drawer="close">Close</wa-button>
-        </wa-drawer>
-
-        <wa-button (click)="openDrawer()">
-          <wa-icon family="classic" name="bars" variant="regular"></wa-icon>
-        </wa-button>
+          <wa-button (click)="openDrawer()">
+            <wa-icon family="classic" name="bars" variant="regular"></wa-icon>
+          </wa-button>
       }
     </div>
   </div>

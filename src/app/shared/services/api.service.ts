@@ -13,6 +13,9 @@ export class ApiService {
   #overlays: WritableSignal<Datum[]> = signal([]);
   overlays: Signal<Datum[]> = computed(this.#overlays);
 
+  #views: WritableSignal<Datum[]> = signal([]);
+  views: Signal<any[]> = computed(this.#views);
+
   constructor(private http: HttpClient) { }
 
   fetchProjects(params?: HttpParams): void {
@@ -25,5 +28,13 @@ export class ApiService {
   fetchOverlays(params?: HttpParams): void {
     this.http.get<StrapiResponse>(`api/overlays`, {params})
     .subscribe((res: StrapiResponse): void => this.#overlays.set(res.data));
+  }
+
+  fetchOverlayViews(params?: HttpParams): void {
+    this.http.get<StrapiResponse>(`api/views`, {params})
+    .subscribe((res: StrapiResponse): void => {
+      console.log(res);
+      this.#views.set(res.data ?? [])
+    });
   }
 }
