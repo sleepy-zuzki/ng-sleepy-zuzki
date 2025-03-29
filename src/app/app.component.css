@@ -1,0 +1,22 @@
+.link {
+  font-weight: bold;
+  @apply text-amber-800;
+}
+
+.link_container {
+  padding: 5px 10px;
+  text-decoration: none;
+}
+
+.link_container:hover {
+  border-radius: 5px;
+  @apply bg-amber-700;
+
+  .link {
+    @apply text-amber-300;
+  }
+}
+
+wa-card {
+  @apply mt-5 cursor-pointer scale-100 transition duration-300 ease-in-out hover:scale-105;
+}

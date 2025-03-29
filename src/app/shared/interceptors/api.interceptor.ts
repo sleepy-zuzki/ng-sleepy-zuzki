@@ -10,8 +10,7 @@ import { Observable } from 'rxjs';
 
 export const ApiInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
   const headers: HttpHeaders = new HttpHeaders({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${environment.API_TOKEN}`
+    'Content-Type': 'application/json'
   });
 
   const url: string = `${environment.API_URL}/${req.url}`;
