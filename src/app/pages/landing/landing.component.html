@@ -1,8 +1,20 @@
-<wa-page>
-  <app-header slot="header" class="wa-body-s shadow-sm"></app-header>
-  <app-about id='avatar' slot='main-header' class='avatar_container'/>
-  <main class="wa-body-l text-center">
-    <app-projects id='projects' class='projects_container'/>
-    <app-socials id="socials"/>
-  </main>
-</wa-page>
+<section id='avatar' slot='main-header' class='avatar_container items-center'>
+  <wa-avatar
+    class='avatar'
+    image='https://assets.zuzki.dev/zuzki_christmas_optimized_2123ccfe72.webp'
+    label='Zuzki'>
+  </wa-avatar>
+
+  <section id='about' class='about_container'>
+    <p>Soy un desarrollador apasionado por la creación de aplicaciones web innovadoras y funcionales.</p>
+    <p>Siempre busco nuevas formas de mejorar mis habilidades y actualmente estoy explorando el emocionante mundo
+      del diseño de interfaces para las transmisiones en vivo.</p>
+    <p>Mi enfoque actual se centra en combinar creatividad y tecnología para ofrecer soluciones que marquen la
+      diferencia.</p>
+  </section>
+</section>
+
+<main class="wa-body-l text-center">
+  <app-projects id='projects' class='projects_container'/>
+  <app-socials id="socials"/>
+</main>
