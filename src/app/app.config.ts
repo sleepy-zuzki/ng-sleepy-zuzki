@@ -3,11 +3,11 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
-import { ApiInterceptor } from '@interceptors/api.interceptor';
+import { GithubDataInterceptor } from '@interceptors/github-data.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(withInterceptors([ApiInterceptor])),
+    provideHttpClient(withInterceptors([GithubDataInterceptor])),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes)
   ]

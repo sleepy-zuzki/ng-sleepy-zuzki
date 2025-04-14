@@ -2,7 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, Signal } from '@angular/core
 import { ProjectComponent } from '@components/projects/project/project.component';
 import { ApiService } from '@services/api.service';
 import { HttpParams } from '@angular/common/http';
-import { Datum } from '@core/Interfaces/StrapiResponse';
+import { Datum } from '@core/interfaces/strapi-response.interface';
 import { SkeletonComponent } from '@components/projects/project/skeleton/skeleton.component';
 
 @Component({

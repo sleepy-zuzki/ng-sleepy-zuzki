@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Your rule content
+
+- **Tecnologias**: Las tecnologias del proyecto son principalmente, Angular en su version 19, Tailwindcss version 3.44 y una nueva tecnologia llamada Web Awesome.
+- **Estructura de carpetas**: La estructura de carpetas sera un estilo modular debido a que el proyecto aun no posee un tamaño que requiera una mas estructurada a features.
+- **Estructura de datos**: Cualquier modelo de datos que sean requeridos en caso de no existir deben ser agregados dentro de la carpeta `/src/app/core`, donde las interfaces estaran dentro del directorio `/src/app/core/interfaces` y los modelos dentro de `/src/app/core/models`.
+- **Nomenclatura de los datos**: Todos los modelos e interafeces en sus atributos tener una nomenclatura snake_case y los metodos deben tener una nomenclatura camelCase.
+- **Reglas de modelos**: Los modelos deben ser clases, los cuales pueden o no recibir en su contructor un json para injectar informacion ya estructurada.

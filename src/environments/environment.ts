@@ -1,4 +1,7 @@
 export const environment = {
   'API_URL': '',
-  'API_TOKEN': ''
+  'GITHUB_DATA_URL': '',
+  'ENDPOINTS': {
+    'OVERLAYS': '/overlays'
+  }
 };

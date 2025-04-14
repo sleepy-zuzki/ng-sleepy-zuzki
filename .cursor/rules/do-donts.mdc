@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Que puede hacerse y que no
+
+- **DONDE NO DESARROLLAR**: You won't add code outside of `src`
+- **UBICACION DE LOS COMPONENTES**: La ubicacion de los componentes estara dentro de `src/app/shared/components`
+- **UBICACION DE LOS SERVICIOS**: La ubicacion de los componentes estara dentro de `src/app/shared/services`
+- **PAGINAS**: Cualquier vista nueva para el proyecto, debera tener su directorio dentro de `src/app/pages`
+- **VARIABLES DE ENTORNO**: Las variables de entorno estaran guardadas en [environment.development.ts](mdc:src/environments/environment.development.ts), cualquier nueva variable que requiera el proyecto sera agregada ahi para su posterior revision.
+- **DONDE NO AGREGAR TOKENS DE ACCESO**: Evitaras agregar llaves de acceso, token o cualquier tipo de credencial que pueda ser perjudicial para la seguridad del proyecto, directamente en el codigo, deberas crearle su variable en [environment.development.ts](mdc:src/environments/environment.development.ts) y reutilizarla donde sea necesario
+- **DONDE REALIZAR LLAMADOS API**: Evita realizar llamados API directamente en los componentes, todo llamado API se debe realizar desde un service el cual debe estar creado o existir en el directorio de servicios, que ha sido previamente mencionado.
+- **NOMENCLATURA**: Todos los archivos que se vayan a crear deben tener una nomenclatura de tipo kebab-case, no otra y si el archivo esta dentro de cualquier sub carpeta del directorio `src/app` debe agregarse esto a su nombre, por ejemplo si es una pagina que esta dentro del directorio `src/app/pages` el nombre debe ser algo similar a `landing.page.html`.
+- **IMPORTACIONES**: A la hora de realizar un import, debes revisar si la ruta que vas a utilizar tiene un path alias que pueda ser utilizado, estos estaran definidos en el archivo [tsconfig.json](mdc:tsconfig.json).
+- **DONDE NO CREAR MODELOS E INTERFACES**: Los modelos e interfaces deben estar estrictamente creados dentro de su respectiva carpeta localizada en `/src/app/core`, no deben estar en otro lugar aparte de este.
+- **SEGURIDAD DE LOS MODELOS**: para evitar cualquier tipo de mutacion indeseada dentro de los modelos, todos los atributos deben ser privados y deben tener su metodo get y set a menos que se especifique que es solo de lectura, en ese caso no es necesario agregar el setter.
