@@ -1,17 +1,25 @@
 import { ILayout } from '../interfaces/layout.interface';
+import { Overlay } from '@core/models/overlay.model';
 
 export class LayoutModel implements ILayout {
   #id: string;
   #name: string;
-  #overlays: string;
+  #overlays: string | Overlay;
   #status: string;
   #preview: string;
   #source: string;
 
-  constructor(data?: ILayout) {
+  constructor(data?: ILayout, availableOverlays?: Overlay[]) {
     this.#id = data?.id || '';
     this.#name = data?.name || '';
-    this.#overlays = data?.overlays || '';
+    
+    // Procesar overlay
+    if (typeof data?.overlays === 'string' && availableOverlays?.length) {
+      this.#overlays = availableOverlays.find(overlay => overlay.id === data.overlays) || data.overlays;
+    } else {
+      this.#overlays = data?.overlays || '';
+    }
+    
     this.#status = data?.status || '';
     this.#preview = data?.preview || '';
     this.#source = data?.source || '';
@@ -33,11 +41,11 @@ export class LayoutModel implements ILayout {
     this.#name = value;
   }
 
-  public get overlays(): string {
+  public get overlays(): string | Overlay {
     return this.#overlays;
   }
 
-  public set overlays(value: string) {
+  public set overlays(value: string | Overlay) {
     this.#overlays = value;
   }
 

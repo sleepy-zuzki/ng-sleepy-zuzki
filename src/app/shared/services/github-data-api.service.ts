@@ -30,10 +30,36 @@ export class GithubDataApiService {
   constructor(private http: HttpClient) { }
 
   fetchOverlays(params?: HttpParams): void {
+    // Verificar si hay creadores y layouts cargados
+    const availableCreators = this.#creators();
+    const availableLayouts = this.#layouts();
+    
+    if (availableCreators.length === 0 || availableLayouts.length === 0) {
+      // Si no hay creadores o layouts, cargarlos primero y luego cargar overlays
+      if (availableCreators.length === 0) {
+        this.fetchCreators();
+      }
+      
+      if (availableLayouts.length === 0) {
+        this.fetchLayouts();
+      }
+      
+      // Esperar a que los datos estén cargados antes de cargar overlays
+      setTimeout(() => this.loadOverlays(params), 500);
+    } else {
+      // Si ya hay creadores y layouts, cargar overlays directamente
+      this.loadOverlays(params);
+    }
+  }
+
+  // Método privado para cargar overlays (evita duplicación de código)
+  private loadOverlays(params?: HttpParams): void {
     this.http.get<IOverlay[]>('data/overlays.json', { params })
       .subscribe({
         next: (response: IOverlay[]): void => {
-          const overlays = response.map(data => new Overlay(data));
+          const creators = this.#creators();
+          const layouts = this.#layouts();
+          const overlays = response.map(data => new Overlay(data, creators, layouts));
           this.#overlays.set(overlays);
         },
         error: (error): void => {
@@ -90,10 +116,40 @@ export class GithubDataApiService {
   }
 
   fetchLayouts(params?: HttpParams): void {
+    // Verificar si hay overlays cargados
+    const availableOverlays = this.#overlays();
+    
+    if (availableOverlays.length === 0) {
+      // Si no hay overlays, cargarlos primero sin procesar layouts todavía
+      this.http.get<IOverlay[]>('data/overlays.json')
+        .subscribe({
+          next: (response: IOverlay[]): void => {
+            // Crear overlays básicos sin procesar layouts para evitar dependencia circular
+            const overlays = response.map(data => new Overlay({...data, layouts: ''}));
+            this.#overlays.set(overlays);
+            
+            // Ahora cargar los layouts
+            this.loadLayouts(params);
+          },
+          error: (error): void => {
+            console.error('Error fetching overlays for layouts:', error);
+            // Cargar layouts de todos modos, pero sin overlays disponibles
+            this.loadLayouts(params);
+          }
+        });
+    } else {
+      // Si ya hay overlays, cargar layouts directamente
+      this.loadLayouts(params);
+    }
+  }
+
+  // Método privado para cargar layouts (evita duplicación de código)
+  private loadLayouts(params?: HttpParams): void {
     this.http.get<ILayout[]>('data/layouts.json', { params })
       .subscribe({
         next: (response: ILayout[]): void => {
-          const layouts = response.map(data => new LayoutModel(data));
+          const overlays = this.#overlays();
+          const layouts = response.map(data => new LayoutModel(data, overlays));
           this.#layouts.set(layouts);
         },
         error: (error): void => {

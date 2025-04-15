@@ -1,24 +1,51 @@
 import { Overlay as IOverlay } from '@core/interfaces/overlay.interface';
+import { Creator } from '@core/models/creator.model';
+import { LayoutModel } from '@core/models/layout.model';
 
 export class Overlay implements IOverlay {
   #id: string;
   #name: string;
   #status: string;
   #preview: string;
-  #owner: string;
-  #creator: string;
+  #owner: string | Creator;
+  #creator: string | Creator;
   #technologies: string;
-  #layouts: string[];
+  #layouts: string | LayoutModel[];
 
-  constructor(data?: Partial<IOverlay>) {
+  constructor(data?: Partial<IOverlay>, availableCreators?: Creator[], availableLayouts?: LayoutModel[]) {
     this.#id = data?.id ?? '';
     this.#name = data?.name ?? '';
     this.#status = data?.status ?? '';
     this.#preview = data?.preview ?? '';
-    this.#owner = data?.owner ?? '';
-    this.#creator = data?.creator ?? '';
+    
+    // Procesar owner
+    if (typeof data?.owner === 'string' && availableCreators?.length) {
+      this.#owner = availableCreators.find(creator => creator.id === data.owner) || data.owner;
+    } else {
+      this.#owner = data?.owner ?? '';
+    }
+    
+    // Procesar creator
+    if (typeof data?.creator === 'string' && availableCreators?.length) {
+      this.#creator = availableCreators.find(creator => creator.id === data.creator) || data.creator;
+    } else {
+      this.#creator = data?.creator ?? '';
+    }
+    
     this.#technologies = data?.technologies ?? '';
-    this.#layouts = data?.layouts ?? [];
+    
+    // Procesar layouts
+    if (typeof data?.layouts === 'string' && availableLayouts?.length) {
+      this.#layouts = data.layouts
+        .split(',')
+        .filter(id => id !== '')
+        .map(id => availableLayouts.find(layout => layout.id === id))
+        .filter((layout): layout is LayoutModel => layout !== undefined);
+    } else if (Array.isArray(data?.layouts)) {
+      this.#layouts = data.layouts;
+    } else {
+      this.#layouts = '';
+    }
   }
 
   get id(): string {
@@ -53,19 +80,19 @@ export class Overlay implements IOverlay {
     this.#preview = value;
   }
 
-  get owner(): string {
+  get owner(): string | Creator {
     return this.#owner;
   }
 
-  set owner(value: string) {
+  set owner(value: string | Creator) {
     this.#owner = value;
   }
 
-  get creator(): string {
+  get creator(): string | Creator {
     return this.#creator;
   }
 
-  set creator(value: string) {
+  set creator(value: string | Creator) {
     this.#creator = value;
   }
 
@@ -77,11 +104,11 @@ export class Overlay implements IOverlay {
     this.#technologies = value;
   }
 
-  get layouts(): string[] {
+  get layouts(): string | LayoutModel[] {
     return this.#layouts;
   }
 
-  set layouts(value: string[]) {
+  set layouts(value: string | LayoutModel[]) {
     this.#layouts = value;
   }
 
