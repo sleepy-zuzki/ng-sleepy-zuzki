@@ -1,0 +1,19 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+**Localizacion de la data para el API**
+
+Toda la informacion que utilizada el api se encuentra en este repositorio https://github.com/sleepy-zuzki/zuzki-dev-data/tree/main/data.
+
+Toda la informacion disponible aca debe ser analizada y descrita para su posterior uso en el proyecto.
+
+Es importante tomar en consideracio la siguiente infromacion:
+- **Overlays**
+    - El archivo de `overlays.json` es el principal, el resto de archivos estan relacionado en gran medida con este.
+    - Los atributos owner y creator del archivo `overlays.json` son ids en string que estan relacionados con el archivo `creators.json` y debe reflejarse de la misma manera cuando se trabaja con esto.
+- **Layouts**
+    - El archivo `layouts.json` tiene el atributo llamado overlays que debe ser considerado relacion con el archivo `overlays.json`.
+- **Creators**
+    - El archivo de `creators.json` posee el atributo socials el cual es relacion directa con el archivo llamado `socials.json`.
