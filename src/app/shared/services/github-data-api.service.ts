@@ -33,17 +33,17 @@ export class GithubDataApiService {
     // Verificar si hay creadores y layouts cargados
     const availableCreators = this.#creators();
     const availableLayouts = this.#layouts();
-    
+
     if (availableCreators.length === 0 || availableLayouts.length === 0) {
       // Si no hay creadores o layouts, cargarlos primero y luego cargar overlays
       if (availableCreators.length === 0) {
         this.fetchCreators();
       }
-      
+
       if (availableLayouts.length === 0) {
         this.fetchLayouts();
       }
-      
+
       // Esperar a que los datos estén cargados antes de cargar overlays
       setTimeout(() => this.loadOverlays(params), 500);
     } else {
@@ -54,7 +54,7 @@ export class GithubDataApiService {
 
   // Método privado para cargar overlays (evita duplicación de código)
   private loadOverlays(params?: HttpParams): void {
-    this.http.get<IOverlay[]>('data/overlays.json', { params })
+    this.http.get<IOverlay[]>('overlays', { params })
       .subscribe({
         next: (response: IOverlay[]): void => {
           const creators = this.#creators();
@@ -70,7 +70,7 @@ export class GithubDataApiService {
   }
 
   fetchSocials(params?: HttpParams): void {
-    this.http.get<ISocial[]>('data/socials.json', { params })
+    this.http.get<ISocial[]>('socials', { params })
       .subscribe({
         next: (response: ISocial[]): void => {
           const socials = response.map(data => new Social(data));
@@ -86,11 +86,11 @@ export class GithubDataApiService {
   fetchCreators(params?: HttpParams): void {
     // Verificar si hay redes sociales cargadas
     const availableSocials = this.#socials();
-    
+
     if (availableSocials.length === 0) {
       // Si no hay redes sociales, cargarlas primero y luego cargar los creadores
       this.fetchSocials();
-      
+
       // Esperar a que las redes sociales estén cargadas antes de cargar creadores
       setTimeout(() => this.loadCreators(params), 300);
     } else {
@@ -101,7 +101,7 @@ export class GithubDataApiService {
 
   // Método privado para cargar creadores (evita duplicación de código)
   private loadCreators(params?: HttpParams): void {
-    this.http.get<ICreator[]>('data/creators.json', { params })
+    this.http.get<ICreator[]>('creators', { params })
       .subscribe({
         next: (response: ICreator[]): void => {
           const socials = this.#socials();
@@ -118,16 +118,16 @@ export class GithubDataApiService {
   fetchLayouts(params?: HttpParams): void {
     // Verificar si hay overlays cargados
     const availableOverlays = this.#overlays();
-    
+
     if (availableOverlays.length === 0) {
       // Si no hay overlays, cargarlos primero sin procesar layouts todavía
-      this.http.get<IOverlay[]>('data/overlays.json')
+      this.http.get<IOverlay[]>('overlays')
         .subscribe({
           next: (response: IOverlay[]): void => {
             // Crear overlays básicos sin procesar layouts para evitar dependencia circular
             const overlays = response.map(data => new Overlay({...data, layouts: ''}));
             this.#overlays.set(overlays);
-            
+
             // Ahora cargar los layouts
             this.loadLayouts(params);
           },
@@ -145,7 +145,7 @@ export class GithubDataApiService {
 
   // Método privado para cargar layouts (evita duplicación de código)
   private loadLayouts(params?: HttpParams): void {
-    this.http.get<ILayout[]>('data/layouts.json', { params })
+    this.http.get<ILayout[]>('layouts', { params })
       .subscribe({
         next: (response: ILayout[]): void => {
           const overlays = this.#overlays();
@@ -160,7 +160,7 @@ export class GithubDataApiService {
   }
 
   fetchTechnologies(params?: HttpParams): void {
-    this.http.get<ITechnology[]>('data/tecnologies.json', { params })
+    this.http.get<ITechnology[]>('tecnologies', { params })
       .subscribe({
         next: (response: ITechnology[]): void => {
           const technologies = response.map(data => new TechnologyModel(data));
@@ -172,4 +172,4 @@ export class GithubDataApiService {
         }
       });
   }
-} 
+}
