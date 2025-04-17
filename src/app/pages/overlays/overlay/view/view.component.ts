@@ -1,6 +1,8 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, ElementRef, OnInit, Signal, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ApiService } from '@services/api.service';
+import { GithubDataApiService } from '@services/github-data-api.service';
+import { Overlay } from '@core/models/overlay.model';
+import { LayoutModel } from '@core/models/layout.model';
 
 @Component({
   selector: 'app-view',
@@ -10,32 +12,46 @@ import { ApiService } from '@services/api.service';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ViewComponent implements OnInit {
-  views: Signal<any[]>;
-  currentView: any;
+  overlays: Signal<Overlay[]>;
+  currentOverlay: Overlay | null = null;
+  currentLayout: LayoutModel | null = null;
   @ViewChild('streamerView') viewElement?: ElementRef;
 
   constructor (
     private route: ActivatedRoute,
-    private apiService: ApiService,
+    private apiService: GithubDataApiService,
   ) {
-    this.views = this.apiService.views;
+    this.overlays = this.apiService.overlays;
 
     effect((): void => {
-      if (this.views() && this.views().length > 0) {
-        this.currentView = this.views()[0];
+      if (this.overlays() && this.overlays().length > 0) {
+        // Find the overlay for the specified streamer
+        const streamer: string | null = this.route.snapshot.paramMap.get('overlay_id');
+        if (streamer !== null) {
+          this.currentOverlay = this.overlays().find((overlay: Overlay) => overlay.id === streamer) ?? null;
 
-        if (this.viewElement) {
-          this.viewElement.nativeElement.src = this.currentView.content.url;
+          if (this.currentOverlay) {
+            // Get the first layout from the overlay's layouts
+            const layouts = this.currentOverlay.layouts;
+            if (Array.isArray(layouts) && layouts.length > 0) {
+              this.currentLayout = layouts[1];
+              
+              // Update the iframe source with the layout source URL
+              if (this.viewElement && this.currentLayout) {
+                this.viewElement.nativeElement.src = this.currentLayout.source;
+              }
+            }
+          }
         }
       }
     })
   }
 
   ngOnInit(): void {
-    const streamer: string | null = this.route.snapshot.paramMap.get('streamer');
+    const streamer: string | null = this.route.snapshot.paramMap.get('overlay_id');
 
     if (streamer !== null) {
-      this.apiService.fetchOverlayViews()
+      this.apiService.fetchOverlays();
     }
   }
 }
