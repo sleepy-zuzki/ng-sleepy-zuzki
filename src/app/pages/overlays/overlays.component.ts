@@ -3,6 +3,7 @@ import { GithubDataApiService } from '@services/github-data-api.service';
 import { Overlay } from '@core/models/overlay.model';
 import { SkeletonComponent } from '@components/projects/project/skeleton/skeleton.component';
 import { OverlayComponent } from '@components/overlays/overlay/overlay.component';
+import { OverlayService } from '@services/overlay.service';
 
 @Component({
   selector: 'app-overlays',
@@ -19,12 +20,16 @@ export class OverlaysComponent implements OnInit {
   loading: WritableSignal<boolean> = signal(true);
   error: WritableSignal<boolean> = signal(false);
 
-  constructor(private githubDataApi: GithubDataApiService) {
+  constructor(
+    private githubDataApi: GithubDataApiService,
+    private overlayService: OverlayService
+  ) {
     this.overlays = this.githubDataApi.overlays;
   }
 
   ngOnInit(): void {
     this.loadOverlays();
+    this.overlayService.setCurrentOverlay(new Overlay());
   }
 
   loadOverlays(): void {
