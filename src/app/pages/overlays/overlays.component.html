@@ -1,16 +1,28 @@
 <main class="w-full flex justify-evenly flex-wrap max-w-[1000px] px-1.5 m-auto">
-  @for (overlay of overlays(); track overlay.id) {
-    <app-overlay [overlay]="overlay"/>
-  } @empty {
-    <app-skeleton/>
-    <app-skeleton/>
-    <app-skeleton/>
-    <app-skeleton/>
-    <app-skeleton/>
-    <app-skeleton/>
-    <app-skeleton/>
-    <app-skeleton/>
-    <app-skeleton/>
-    <app-skeleton/>
+  @if (loading()) {
+    <!-- Mostramos skeletons durante la carga -->
+    @for (skeleton of [1,2,3,4,5,6,7,8,9,10]; track skeleton) {
+      <app-skeleton/>
+    }
+  } @else if (error()) {
+    <!-- Mensaje de error si algo falla -->
+    <div class="w-full text-center py-8">
+      <wa-icon name="circle-exclamation" size="xl" class="text-red-500 mb-3"></wa-icon>
+      <p>No se pudieron cargar los overlays. Por favor, intenta nuevamente.</p>
+      <button class="mt-4 px-4 py-2 bg-primary text-white rounded-md" (click)="retry()">
+        Reintentar
+      </button>
+    </div>
+  } @else if (overlays().length) {
+    <!-- Listado de overlays cuando hay datos -->
+    @for (overlay of overlays(); track overlay.id) {
+      <app-overlay [overlay]="overlay"/>
+    }
+  } @else {
+    <!-- Mensaje cuando no hay overlays disponibles -->
+    <div class="w-full text-center py-8">
+      <wa-icon name="folder-open" size="xl" class="text-gray-400 mb-3"></wa-icon>
+      <p>No hay overlays disponibles actualmente.</p>
+    </div>
   }
 </main>
