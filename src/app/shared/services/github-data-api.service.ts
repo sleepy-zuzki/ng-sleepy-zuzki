@@ -31,7 +31,7 @@ export class GithubDataApiService {
 
   fetchOverlays(params?: HttpParams): void {
     // Verificar si hay creadores cargados
-    const availableCreators = this.#creators();
+    const availableCreators: Creator[] = this.#creators();
 
     if (availableCreators.length === 0) {
       // Si no hay creadores, cargarlos primero
@@ -68,9 +68,9 @@ export class GithubDataApiService {
     this.http.get<IOverlay[]>('overlays', { params })
       .subscribe({
         next: (response: IOverlay[]): void => {
-          const creators = this.#creators();
-          const layouts = this.#layouts();
-          const overlays = response.map(data => new Overlay(data, creators, layouts));
+          const creators: Creator[] = this.#creators();
+          const layouts: LayoutModel[] = this.#layouts();
+          const overlays: Overlay[] = response.map(data => new Overlay(data, creators, layouts));
           this.#overlays.set(overlays);
         },
         error: (error): void => {
@@ -85,9 +85,9 @@ export class GithubDataApiService {
     this.http.get<IOverlay[]>('overlays', { params })
       .subscribe({
         next: (response: IOverlay[]): void => {
-          const creators = this.#creators();
+          const creators: Creator[] = this.#creators();
           // Crear overlays básicos sin procesar layouts
-          const overlays = response.map(data => new Overlay({...data, layouts: ''}, creators));
+          const overlays: Overlay[] = response.map(data => new Overlay({...data, layouts: ''}, creators));
           this.#overlays.set(overlays);
           if (callback) callback();
         },
@@ -103,7 +103,7 @@ export class GithubDataApiService {
     this.http.get<ISocial[]>('socials', { params })
       .subscribe({
         next: (response: ISocial[]): void => {
-          const socials = response.map(data => new Social(data));
+          const socials: Social[] = response.map(data => new Social(data));
           this.#socials.set(socials);
         },
         error: (error): void => {
@@ -115,7 +115,7 @@ export class GithubDataApiService {
 
   fetchCreators(params?: HttpParams): void {
     // Verificar si hay redes sociales cargadas
-    const availableSocials = this.#socials();
+    const availableSocials: Social[] = this.#socials();
 
     if (availableSocials.length === 0) {
       // Si no hay redes sociales, cargarlas primero y luego cargar los creadores
@@ -155,8 +155,8 @@ export class GithubDataApiService {
     this.http.get<ILayout[]>('layouts', { params })
       .subscribe({
         next: (response: ILayout[]): void => {
-          const overlays = this.#overlays();
-          const layouts = response.map(data => new LayoutModel(data, overlays));
+          const overlays: Overlay[] = this.#overlays();
+          const layouts: LayoutModel[] = response.filter((data: ILayout) => data.status !== 'Active').map((data: ILayout) => new LayoutModel(data, overlays));
           this.#layouts.set(layouts);
         },
         error: (error): void => {
@@ -170,7 +170,7 @@ export class GithubDataApiService {
     this.http.get<ITechnology[]>('tecnologies', { params })
       .subscribe({
         next: (response: ITechnology[]): void => {
-          const technologies = response.map(data => new TechnologyModel(data));
+          const technologies: TechnologyModel[] = response.map((data: ITechnology) => new TechnologyModel(data));
           this.#technologies.set(technologies);
         },
         error: (error): void => {

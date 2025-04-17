@@ -7,36 +7,33 @@
           Sleepy Zuzki
         </h1>
       </a>
-      <div class="text-sm md:text-lg flex justify-between">
-        <div class="links flex flex-col items-center lg:flex-row">
-          <a class='link_container' routerLink='/overlays' routerLinkActive="active" ariaCurrentWhenActive="page">
-            <span class='link'>Overlays</span>
-          </a>
-        </div>
 
-        <div class="drawer">
-          @if (overlayService.overlayLayouts().length > 0) {
-            <wa-drawer #drawer label="Vistas" with-header with-footer class="drawer-overview">
-              <main>
-                @for (view of overlayService.overlayLayouts(); track view.id) {
-                  <wa-card with-image class="card-body" title="{{ view.name }}: Haz clic para seleccionar esta vista">
-                    <img src="{{ view.preview }}" height="100" slot="image" alt="Placeholder"/>
-                    <p><b>{{ view.name }}</b></p>
-                  </wa-card>
-                }
-              </main>
+      <div class="links flex flex-col items-center lg:flex-row">
+        <a class='link_container' routerLink='/overlays' routerLinkActive="active" ariaCurrentWhenActive="page">
+          <span class='link'>Overlays</span>
+        </a>
+      </div>
 
-              <wa-button slot="footer" variant="brand" data-drawer="close">Cerrar</wa-button>
-            </wa-drawer>
+      <div class="drawer">
+        @if (overlayService.overlayLayouts().length > 0) {
+          <wa-drawer #drawer label="Vistas" with-header with-footer class="drawer-overview">
+            <main>
+              @for (view of overlayService.overlayLayouts(); track view.id) {
+                <wa-card with-image class="card-body" title="{{ view.name }}: Haz clic para seleccionar esta vista">
+                  <img src="{{ view.preview }}" height="100" slot="image" alt="Placeholder"/>
+                  <p><b>{{ view.name }}</b></p>
+                </wa-card>
+              }
+            </main>
 
-            <wa-button (click)="openDrawer()" aria-label="Ver layouts disponibles" title="Ver layouts">
-              <wa-icon family="classic" name="bars" variant="regular"></wa-icon>
-              <span class="sr-only">Ver layouts</span>
-            </wa-button>
-          } @else {
-            <div class="text-sm text-gray-500">No hay vistas disponibles</div>
-          }
-        </div>
+            <wa-button slot="footer" variant="brand" data-drawer="close">Cerrar</wa-button>
+          </wa-drawer>
+
+          <wa-button (click)="openDrawer()" aria-label="Ver layouts disponibles" title="Ver layouts">
+            <wa-icon family="classic" name="bars" variant="regular"></wa-icon>
+            <span class="sr-only">Ver layouts</span>
+          </wa-button>
+        }
       </div>
     </div>
 
