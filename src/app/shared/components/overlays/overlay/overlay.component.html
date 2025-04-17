@@ -1,7 +1,7 @@
 <wa-card with-image with-footer with-header class="card-overview">
-  <img [src]="overlay()?.preview || ''" 
-       [alt]="(overlay()?.name || 'Overlay') + '\'s Layout'" 
-       class="rounded" 
+  <img [src]="overlay()?.preview || ''"
+       [alt]="(overlay()?.name || 'Overlay') + '\'s Layout'"
+       class="rounded"
        slot="image"/>
 
   <div slot="header">
@@ -9,14 +9,16 @@
   </div>
 
   <div class="tags">
-    <wa-tag variant="brand" appearance="filled">{{ overlay()?.creator || 'Unknown Creator' }}</wa-tag>
+    <wa-tag variant="brand" appearance="filled">
+      {{ getOverlayCreator() }}
+    </wa-tag>
   </div>
 
   <div slot="footer" class="flex justify-center">
-    <a [routerLink]="['/overlays', overlay()?.id]" 
-       routerLinkActive="active" 
+    <a [routerLink]="['/overlays', overlay()?.id]"
+       routerLinkActive="active"
        ariaCurrentWhenActive="page">
       <wa-button variant="brand" pill>Ver overlay</wa-button>
     </a>
   </div>
-</wa-card> 
+</wa-card>

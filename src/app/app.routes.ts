@@ -5,6 +5,6 @@ import { ViewComponent } from '@pages/overlays/overlay/view/view.component';
 
 export const routes: Routes = [
   { path: 'overlays', component: OverlaysComponent },
-  { path: 'overlays/:streamer', component: ViewComponent },
+  { path: 'overlays/:overlay_id', component: ViewComponent },
   { path: '', component: LandingComponent }
 ];
