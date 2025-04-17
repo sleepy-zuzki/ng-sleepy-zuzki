@@ -22,4 +22,4 @@ export const GithubDataInterceptor: HttpInterceptorFn = (
   const url: string = `${environment.GITHUB_DATA_URL}/${req.url}`;
   const newRequest: HttpRequest<unknown> = req.clone({ url, headers });
   return next(newRequest);
-}; 
+};

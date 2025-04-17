@@ -1,4 +1,4 @@
-@for (project of projects(); track project.id) {
+@for (project of []; track project) {
   <app-project [project]="project"/>
 } @empty {
   <app-skeleton/>

@@ -1,7 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, input, InputSignal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Overlay } from '@core/models/overlay.model';
-import { GithubDataApiService } from '@services/github-data-api.service';
 
 @Component({
   selector: 'app-overlay',
