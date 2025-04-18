@@ -20,11 +20,18 @@ import { BehaviorSubject, Observable, catchError, finalize, map, of, switchMap, 
  * Interfaz para el mensaje de error
  */
 export interface ErrorMessage {
+  /** Mensaje descriptivo del error */
   message: string;
+  /** Código de estado HTTP (opcional) */
   status?: number;
+  /** Momento en que ocurrió el error */
   timestamp: Date;
 }
 
+/**
+ * Servicio para obtener datos desde la API de GitHub
+ * Implementa un patrón de manejo de estado basado en Signals y RxJS
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -47,25 +54,33 @@ export class GithubDataApiService {
   socialsError: Signal<ErrorMessage | null>;
   layoutsError: Signal<ErrorMessage | null>;
   technologiesError: Signal<ErrorMessage | null>;
-  // BehaviorSubjects para datos
-  #overlaysSubject = new BehaviorSubject<Overlay[]>([]);
-  #creatorsSubject = new BehaviorSubject<Creator[]>([]);
-  #socialsSubject = new BehaviorSubject<Social[]>([]);
-  #layoutsSubject = new BehaviorSubject<LayoutModel[]>([]);
-  #technologiesSubject = new BehaviorSubject<TechnologyModel[]>([]);
-  // BehaviorSubjects para estados de carga
-  #overlaysStateSubject = new BehaviorSubject<LoadState>(LoadState.INIT);
-  #creatorsStateSubject = new BehaviorSubject<LoadState>(LoadState.INIT);
-  #socialsStateSubject = new BehaviorSubject<LoadState>(LoadState.INIT);
-  #layoutsStateSubject = new BehaviorSubject<LoadState>(LoadState.INIT);
-  #technologiesStateSubject = new BehaviorSubject<LoadState>(LoadState.INIT);
-  // BehaviorSubjects para errores
-  #overlaysErrorSubject = new BehaviorSubject<ErrorMessage | null>(null);
-  #creatorsErrorSubject = new BehaviorSubject<ErrorMessage | null>(null);
-  #socialsErrorSubject = new BehaviorSubject<ErrorMessage | null>(null);
-  #layoutsErrorSubject = new BehaviorSubject<ErrorMessage | null>(null);
-  #technologiesErrorSubject = new BehaviorSubject<ErrorMessage | null>(null);
+  
+  /** BehaviorSubjects para datos - estado interno mutable */
+  #overlaysSubject: BehaviorSubject<Overlay[]> = new BehaviorSubject<Overlay[]>([]);
+  #creatorsSubject: BehaviorSubject<Creator[]> = new BehaviorSubject<Creator[]>([]);
+  #socialsSubject: BehaviorSubject<Social[]> = new BehaviorSubject<Social[]>([]);
+  #layoutsSubject: BehaviorSubject<LayoutModel[]> = new BehaviorSubject<LayoutModel[]>([]);
+  #technologiesSubject: BehaviorSubject<TechnologyModel[]> = new BehaviorSubject<TechnologyModel[]>([]);
 
+  /** BehaviorSubjects para estados de carga - estado interno mutable */
+  #overlaysStateSubject: BehaviorSubject<LoadState> = new BehaviorSubject<LoadState>(LoadState.INIT);
+  #creatorsStateSubject: BehaviorSubject<LoadState> = new BehaviorSubject<LoadState>(LoadState.INIT);
+  #socialsStateSubject: BehaviorSubject<LoadState> = new BehaviorSubject<LoadState>(LoadState.INIT);
+  #layoutsStateSubject: BehaviorSubject<LoadState> = new BehaviorSubject<LoadState>(LoadState.INIT);
+  #technologiesStateSubject: BehaviorSubject<LoadState> = new BehaviorSubject<LoadState>(LoadState.INIT);
+
+  /** BehaviorSubjects para errores - estado interno mutable */
+  #overlaysErrorSubject: BehaviorSubject<ErrorMessage | null> = new BehaviorSubject<ErrorMessage | null>(null);
+  #creatorsErrorSubject: BehaviorSubject<ErrorMessage | null> = new BehaviorSubject<ErrorMessage | null>(null);
+  #socialsErrorSubject: BehaviorSubject<ErrorMessage | null> = new BehaviorSubject<ErrorMessage | null>(null);
+  #layoutsErrorSubject: BehaviorSubject<ErrorMessage | null> = new BehaviorSubject<ErrorMessage | null>(null);
+  #technologiesErrorSubject: BehaviorSubject<ErrorMessage | null> = new BehaviorSubject<ErrorMessage | null>(null);
+
+  /**
+   * Constructor del servicio
+   * Inicializa todas las signals a partir de los BehaviorSubjects
+   * @param http Cliente HTTP para realizar peticiones a la API
+   */
   constructor(private http: HttpClient) {
     // Inicializar signals para datos usando toSignal
     this.overlays = toSignal(this.#overlaysSubject.asObservable(), { initialValue: [] });
@@ -91,12 +106,13 @@ export class GithubDataApiService {
 
   /**
    * Obtiene los overlays con toda su información relacionada
+   * Realiza una carga en cascada si es necesario (primero creadores, luego layouts)
    * @param params Parámetros HTTP opcionales
    */
   fetchOverlays(params?: HttpParams): void {
     this.#overlaysStateSubject.next(LoadState.LOADING);
     this.#overlaysErrorSubject.next(null);
-
+    
     const availableCreators: Creator[] = this.#creatorsSubject.getValue();
 
     if (availableCreators.length === 0) {
@@ -127,19 +143,21 @@ export class GithubDataApiService {
 
   /**
    * Obtiene todos los overlays con sus layouts
+   * Realiza una carga en cascada si es necesario
    * @param params Parámetros HTTP opcionales
    * @param autoSubscribe Si es true, autogestiona la suscripción
+   * @returns Observable con los overlays obtenidos
    */
   fetchOverlaysWithLayouts(
     params?: HttpParams,
-    autoSubscribe = false
+    autoSubscribe: boolean = false
   ): Observable<Overlay[]> {
     this.#overlaysStateSubject.next(LoadState.LOADING);
     this.#overlaysErrorSubject.next(null);
+    
+    const availableLayouts: LayoutModel[] = this.#layoutsSubject.getValue();
 
-    const availableLayouts = this.#layoutsSubject.getValue();
-
-    const observable = availableLayouts.length === 0
+    const observable: Observable<Overlay[]> = availableLayouts.length === 0
       ? this.fetchRawOverlays(params).pipe(
           switchMap(() => this.fetchLayouts(params, false)),
           switchMap(() => this.loadOverlaysWithFullData(params))
@@ -153,27 +171,28 @@ export class GithubDataApiService {
    * Obtiene las redes sociales
    * @param params Parámetros HTTP opcionales
    * @param autoSubscribe Si es true, autogestiona la suscripción
+   * @returns Observable con las redes sociales obtenidas
    */
   fetchSocials(
-    params?: HttpParams,
-    autoSubscribe = true
+    params?: HttpParams, 
+    autoSubscribe: boolean = true
   ): Observable<Social[]> {
     this.#socialsStateSubject.next(LoadState.LOADING);
     this.#socialsErrorSubject.next(null);
-
-    const observable = this.http.get<ISocial[]>('socials', { params }).pipe(
-      map((response: ISocial[]): Social[] =>
-        response.map(data => new Social(data))
+    
+    const observable: Observable<Social[]> = this.http.get<ISocial[]>('socials', { params }).pipe(
+      map((response: ISocial[]): Social[] => 
+        response.map((data: ISocial) => new Social(data))
       ),
       tap((socials: Social[]) => {
         this.#socialsSubject.next(socials);
         this.#socialsStateSubject.next(LoadState.LOADED);
       }),
-      catchError((error) => this.handleError(
-        error,
-        this.#socialsErrorSubject,
-        this.#socialsStateSubject,
-        'Error fetching socials',
+      catchError((error: any) => this.handleError<Social[]>(
+        error, 
+        this.#socialsErrorSubject, 
+        this.#socialsStateSubject, 
+        'Error fetching socials', 
         []
       )),
       finalize(() => {
@@ -187,31 +206,33 @@ export class GithubDataApiService {
       observable.subscribe();
       return of(this.#socialsSubject.getValue());
     }
-
+    
     return observable;
   }
 
   /**
    * Obtiene los creadores con sus redes sociales
+   * Realiza una carga en cascada si es necesario
    * @param params Parámetros HTTP opcionales
    * @param autoSubscribe Si es true, autogestiona la suscripción
+   * @returns Observable con los creadores obtenidos
    */
   fetchCreators(
-    params?: HttpParams,
-    autoSubscribe = true
+    params?: HttpParams, 
+    autoSubscribe: boolean = true
   ): Observable<Creator[]> {
     this.#creatorsStateSubject.next(LoadState.LOADING);
     this.#creatorsErrorSubject.next(null);
-
+    
     const availableSocials: Social[] = this.#socialsSubject.getValue();
-
-    const observable = availableSocials.length === 0
+    
+    const observable: Observable<Creator[]> = availableSocials.length === 0
       ? this.fetchSocials(params, false).pipe(
           switchMap(() => this.loadCreators(params))
         )
       : this.loadCreators(params);
 
-    const finalObservable = observable.pipe(
+    const finalObservable: Observable<Creator[]> = observable.pipe(
       finalize(() => {
         if (this.#creatorsStateSubject.getValue() === LoadState.LOADING) {
           this.#creatorsStateSubject.next(LoadState.LOADED);
@@ -223,7 +244,7 @@ export class GithubDataApiService {
       finalObservable.subscribe();
       return of(this.#creatorsSubject.getValue());
     }
-
+    
     return finalObservable;
   }
 
@@ -231,15 +252,16 @@ export class GithubDataApiService {
    * Obtiene los layouts
    * @param params Parámetros HTTP opcionales
    * @param autoSubscribe Si es true, autogestiona la suscripción
+   * @returns Observable con los layouts obtenidos
    */
   fetchLayouts(
     params?: HttpParams,
-    autoSubscribe = true
+    autoSubscribe: boolean = true
   ): Observable<LayoutModel[]> {
     this.#layoutsStateSubject.next(LoadState.LOADING);
     this.#layoutsErrorSubject.next(null);
-
-    const observable = this.http.get<ILayout[]>('layouts', { params }).pipe(
+    
+    const observable: Observable<LayoutModel[]> = this.http.get<ILayout[]>('layouts', { params }).pipe(
       map((response: ILayout[]): LayoutModel[] => {
         const overlays: Overlay[] = this.#overlaysSubject.getValue();
         return response
@@ -250,11 +272,11 @@ export class GithubDataApiService {
         this.#layoutsSubject.next(layouts);
         this.#layoutsStateSubject.next(LoadState.LOADED);
       }),
-      catchError((error) => this.handleError(
-        error,
-        this.#layoutsErrorSubject,
-        this.#layoutsStateSubject,
-        'Error fetching layouts',
+      catchError((error: any) => this.handleError<LayoutModel[]>(
+        error, 
+        this.#layoutsErrorSubject, 
+        this.#layoutsStateSubject, 
+        'Error fetching layouts', 
         []
       )),
       finalize(() => {
@@ -268,29 +290,28 @@ export class GithubDataApiService {
       observable.subscribe();
       return of(this.#layoutsSubject.getValue());
     }
-
+    
     return observable;
   }
 
   /**
    * Obtiene las tecnologías
    * @param params Parámetros HTTP opcionales
-   * Implementado con toSignal
    */
   fetchTechnologies(params?: HttpParams): void {
     this.#technologiesStateSubject.next(LoadState.LOADING);
     this.#technologiesErrorSubject.next(null);
-
+    
     this.http.get<ITechnology[]>('tecnologies', { params })
       .pipe(
-        map((response: ITechnology[]): TechnologyModel[] =>
+        map((response: ITechnology[]): TechnologyModel[] => 
           response.map((data: ITechnology) => new TechnologyModel(data))
         ),
         tap((technologies: TechnologyModel[]) => {
           this.#technologiesSubject.next(technologies);
           this.#technologiesStateSubject.next(LoadState.LOADED);
         }),
-        catchError((error) => this.handleError(
+        catchError((error: any) => this.handleError<TechnologyModel[]>(
           error,
           this.#technologiesErrorSubject,
           this.#technologiesStateSubject,
@@ -308,6 +329,9 @@ export class GithubDataApiService {
 
   /**
    * Obtiene los datos básicos de overlays sin procesar layouts
+   * @param params Parámetros HTTP opcionales
+   * @returns Observable con los overlays obtenidos (sin layouts completos)
+   * @private
    */
   private fetchRawOverlays(params?: HttpParams): Observable<Overlay[]> {
     return this.http.get<IOverlay[]>('overlays', { params }).pipe(
@@ -323,7 +347,7 @@ export class GithubDataApiService {
       tap((overlays: Overlay[]) => {
         this.#overlaysSubject.next(overlays);
       }),
-      catchError((error) => this.handleError(
+      catchError((error: any) => this.handleError<Overlay[]>(
         error,
         this.#overlaysErrorSubject,
         this.#overlaysStateSubject,
@@ -335,6 +359,9 @@ export class GithubDataApiService {
 
   /**
    * Carga overlays con datos completos (creadores y layouts)
+   * @param params Parámetros HTTP opcionales
+   * @returns Observable con los overlays obtenidos (con layouts completos)
+   * @private
    */
   private loadOverlaysWithFullData(params?: HttpParams): Observable<Overlay[]> {
     return this.http.get<IOverlay[]>('overlays', { params }).pipe(
@@ -349,7 +376,7 @@ export class GithubDataApiService {
         this.#overlaysSubject.next(overlays);
         this.#overlaysStateSubject.next(LoadState.LOADED);
       }),
-      catchError((error) => this.handleError(
+      catchError((error: any) => this.handleError<Overlay[]>(
         error,
         this.#overlaysErrorSubject,
         this.#overlaysStateSubject,
@@ -361,18 +388,21 @@ export class GithubDataApiService {
 
   /**
    * Carga los creadores con las redes sociales disponibles
+   * @param params Parámetros HTTP opcionales
+   * @returns Observable con los creadores obtenidos
+   * @private
    */
   private loadCreators(params?: HttpParams): Observable<Creator[]> {
     return this.http.get<ICreator[]>('creators', { params }).pipe(
       map((response: ICreator[]): Creator[] => {
-        const socials = this.#socialsSubject.getValue();
-        return response.map(data => new Creator(data, socials));
+        const socials: Social[] = this.#socialsSubject.getValue();
+        return response.map((data: ICreator) => new Creator(data, socials));
       }),
       tap((creators: Creator[]) => {
         this.#creatorsSubject.next(creators);
         this.#creatorsStateSubject.next(LoadState.LOADED);
       }),
-      catchError((error) => this.handleError(
+      catchError((error: any) => this.handleError<Creator[]>(
         error,
         this.#creatorsErrorSubject,
         this.#creatorsStateSubject,
@@ -384,11 +414,13 @@ export class GithubDataApiService {
 
   /**
    * Método centralizado para manejar errores HTTP
-   * @param error Error HTTP
+   * @param error Error HTTP o cualquier otro error
    * @param errorSubject Subject para almacenar el error
    * @param stateSubject Subject para almacenar el estado
    * @param logMessage Mensaje para log de error
    * @param fallbackData Datos por defecto en caso de error
+   * @returns Observable con los datos por defecto
+   * @private
    */
   private handleError<T>(
     error: any,
@@ -398,18 +430,18 @@ export class GithubDataApiService {
     fallbackData: T
   ): Observable<T> {
     console.error(logMessage, error);
-
+    
     const errorMessage: ErrorMessage = {
-      message: error instanceof HttpErrorResponse
-        ? `${error.status}: ${error.statusText}`
+      message: error instanceof HttpErrorResponse 
+        ? `${error.status}: ${error.statusText}` 
         : error?.message || 'Unknown error',
       status: error instanceof HttpErrorResponse ? error.status : undefined,
       timestamp: new Date()
     };
-
+    
     errorSubject.next(errorMessage);
     stateSubject.next(LoadState.ERROR);
-
+    
     return of(fallbackData);
   }
 }
