@@ -1,0 +1,60 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Guidelines for writing clean, maintainable, and human-readable code. Apply these rules when writing or reviewing code to ensure consistency and quality.
+globs: 
+---
+# Directrices de Código Limpio
+
+## Constantes en lugar de Números Mágicos
+- Reemplaza valores codificados con constantes con nombre
+- Utiliza nombres de constantes descriptivos que expliquen el propósito del valor
+- Mantén las constantes en la parte superior del archivo o en un archivo dedicado a constantes
+
+## Nombres Significativos
+- Las variables, funciones y clases deben revelar su propósito
+- Los nombres deben explicar por qué algo existe y cómo se usa
+- Evita abreviaturas a menos que sean universalmente comprendidas
+
+## Comentarios Inteligentes
+- No comentes lo que hace el código - haz que el código se documente a sí mismo
+- Usa comentarios para explicar por qué se hace algo de cierta manera
+- Documenta APIs, algoritmos complejos y efectos secundarios no obvios
+
+## Responsabilidad Única
+- Cada función debe hacer exactamente una cosa
+- Las funciones deben ser pequeñas y enfocadas
+- Si una función necesita un comentario para explicar lo que hace, debería dividirse
+
+## DRY (No Te Repitas)
+- Extrae código repetido en funciones reutilizables
+- Comparte lógica común a través de una abstracción adecuada
+- Mantén fuentes únicas de verdad
+
+## Estructura Limpia
+- Mantén el código relacionado junto
+- Organiza el código en una jerarquía lógica
+- Utiliza convenciones consistentes para nombrar archivos y carpetas
+
+## Encapsulación
+- Oculta los detalles de implementación
+- Expón interfaces claras
+- Traslada condicionales anidados a funciones con nombres descriptivos
+
+## Mantenimiento de la Calidad del Código
+- Refactoriza continuamente
+- Soluciona la deuda técnica temprano
+- Deja el código más limpio de como lo encontraste
+
+## Pruebas
+- Escribe pruebas antes de corregir errores
+- Mantén las pruebas legibles y mantenibles
+- Prueba casos límite y condiciones de error
+
+## Control de Versiones
+- Escribe mensajes de commit claros
+- Haz commits pequeños y enfocados
+- Utiliza nombres de ramas significativos

@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Rules specific to Angular templates that ensures code quality standards.
+globs: **/*.component.html
+---
+- El código debe obedecer las reglas definidas en los archivos .htmlhintrc y .editorconfig.
+- Sé conciso y minimiza la prosa innecesaria.

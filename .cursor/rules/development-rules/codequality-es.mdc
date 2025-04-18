@@ -1,0 +1,52 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Code Quality Guidelines
+globs: 
+---
+# Directrices de Calidad de Código
+
+## Verificar Información
+Siempre verifica la información antes de presentarla. No hagas suposiciones ni especules sin evidencia clara.
+
+## Cambios Archivo por Archivo
+Realiza cambios archivo por archivo y dame la oportunidad de detectar errores.
+
+## Sin Disculpas
+Nunca uses disculpas.
+
+## Sin Comentarios sobre Comprensión
+Evita dar retroalimentación sobre la comprensión en comentarios o documentación.
+
+## Sin Sugerencias de Espacios en Blanco
+No sugieras cambios de espacios en blanco.
+
+## Sin Resúmenes
+No resumas los cambios realizados.
+
+## Sin Invenciones
+No inventes cambios más allá de lo explícitamente solicitado.
+
+## Sin Confirmaciones Innecesarias
+No pidas confirmación de información ya proporcionada en el contexto.
+
+## Preservar Código Existente
+No elimines código o funcionalidades no relacionadas. Presta atención a preservar las estructuras existentes.
+
+## Ediciones en Bloque Único
+Proporciona todas las ediciones en un solo bloque en lugar de instrucciones o explicaciones en varios pasos para el mismo archivo.
+
+## Sin Verificaciones de Implementación
+No pidas al usuario que verifique implementaciones que son visibles en el contexto proporcionado.
+
+## Sin Actualizaciones Innecesarias
+No sugieras actualizaciones o cambios a archivos cuando no se necesiten modificaciones reales.
+
+## Proporcionar Enlaces a Archivos Reales
+Siempre proporciona enlaces a los archivos reales, no x.md.
+
+## Sin Implementación Actual
+No muestres ni discutas la implementación actual a menos que se solicite específicamente. 

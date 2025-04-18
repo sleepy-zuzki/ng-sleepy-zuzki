@@ -1,0 +1,82 @@
+---
+description: 
+globs: *.html
+alwaysApply: false
+---
+---
+description: Tailwind CSS and UI component best practices for modern web applications
+globs: **/*.css, **/*.tsx, **/*.jsx, tailwind.config.js, tailwind.config.ts
+---
+# Mejores Prácticas de Tailwind CSS
+
+## Configuración del Proyecto
+- Utiliza la configuración adecuada de Tailwind
+- Configura la extensión del tema correctamente
+- Establece una configuración de purga adecuada
+- Usa integración de plugins apropiada
+- Configura espaciado personalizado y puntos de quiebre
+- Establece una paleta de colores adecuada
+
+## Estilizado de Componentes
+- Usa clases de utilidad en lugar de CSS personalizado
+- Agrupa utilidades relacionadas con @apply cuando sea necesario
+- Utiliza utilidades de diseño responsivo adecuadas
+- Implementa el modo oscuro correctamente
+- Usa variantes de estado apropiadas
+- Mantén los estilos de componentes consistentes
+
+## Diseño
+- Utiliza utilidades de Flexbox y Grid eficazmente
+- Implementa un sistema de espaciado adecuado
+- Usa container queries cuando sea necesario
+- Implementa puntos de quiebre responsivos adecuados
+- Utiliza utilidades de padding y margin apropiadas
+- Implementa utilidades de alineación adecuadas
+
+## Tipografía
+- Usa utilidades de tamaño de fuente adecuadas
+- Implementa altura de línea apropiada
+- Utiliza utilidades de peso de fuente adecuadas
+- Configura fuentes personalizadas correctamente
+- Usa alineación de texto apropiada
+- Implementa decoración de texto adecuada
+
+## Colores
+- Utiliza nombres de colores semánticos
+- Implementa contraste de color adecuado
+- Usa utilidades de opacidad eficazmente
+- Configura colores personalizados correctamente
+- Utiliza utilidades de gradiente apropiadas
+- Implementa estados hover adecuados
+
+## Componentes
+- Usa componentes shadcn/ui cuando estén disponibles
+- Extiende componentes correctamente
+- Mantén las variantes de componentes consistentes
+- Implementa animaciones apropiadas
+- Usa utilidades de transición adecuadas
+- Ten en cuenta la accesibilidad
+
+## Diseño Responsivo
+- Utiliza enfoque mobile-first
+- Implementa puntos de quiebre adecuados
+- Usa container queries eficazmente
+- Maneja diferentes tamaños de pantalla correctamente
+- Implementa tipografía responsiva adecuada
+- Utiliza espaciado responsivo apropiado
+
+## Rendimiento
+- Usa configuración de purga adecuada
+- Minimiza CSS personalizado
+- Utiliza estrategias de caché apropiadas
+- Implementa división de código adecuada
+- Optimiza para producción
+- Monitorea el tamaño del bundle
+
+## Mejores Prácticas
+- Sigue convenciones de nomenclatura
+- Mantén los estilos organizados
+- Usa documentación adecuada
+- Implementa pruebas apropiadas
+- Sigue pautas de accesibilidad
+- Utiliza control de versiones adecuado 

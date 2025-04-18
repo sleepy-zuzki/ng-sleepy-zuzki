@@ -1,0 +1,61 @@
+---
+description: 
+globs: *.ts
+alwaysApply: false
+---
+---
+description: TypeScript coding standards and best practices for modern web development
+globs: **/*.ts, **/*.tsx, **/*.d.ts
+---
+# Mejores Prácticas de TypeScript
+
+## Sistema de Tipos
+- Prefiere interfaces sobre types para definiciones de objetos
+- Usa type para uniones, intersecciones y tipos mapeados
+- Evita usar `any`, prefiere `unknown` para tipos desconocidos
+- Usa configuración estricta de TypeScript
+- Aprovecha los tipos de utilidad incorporados en TypeScript
+- Utiliza genéricos para patrones de tipos reutilizables
+
+## Convenciones de Nomenclatura
+- Usa PascalCase para nombres de tipos e interfaces
+- Usa camelCase para variables y funciones
+- Usa UPPER_CASE para constantes
+- Utiliza nombres descriptivos con verbos auxiliares (ej., isLoading, hasError)
+- Añade prefijo a interfaces para props de React con 'Props' (ej., ButtonProps)
+
+## Organización del Código
+- Mantén las definiciones de tipos cerca de donde se utilizan
+- Exporta tipos e interfaces desde archivos de tipos dedicados cuando son compartidos
+- Usa exportaciones de barril (index.ts) para organizar exportaciones
+- Coloca tipos compartidos en un directorio `types`
+- Co-ubica las props de componentes con sus componentes
+
+## Funciones
+- Usa tipos de retorno explícitos para funciones públicas
+- Utiliza funciones flecha para callbacks y métodos
+- Implementa manejo de errores adecuado con tipos de error personalizados
+- Usa sobrecargas de funciones para escenarios de tipos complejos
+- Prefiere async/await sobre Promises
+
+## Mejores Prácticas
+- Habilita el modo estricto en tsconfig.json
+- Usa readonly para propiedades inmutables
+- Aprovecha las uniones discriminadas para seguridad de tipos
+- Utiliza guardas de tipo para comprobación de tipos en tiempo de ejecución
+- Implementa verificación de nulos adecuada
+- Evita aserciones de tipo a menos que sea necesario
+
+## Manejo de Errores
+- Crea tipos de error personalizados para errores específicos del dominio
+- Usa tipos Result para operaciones que pueden fallar
+- Implementa límites de error adecuados
+- Utiliza bloques try-catch con cláusulas catch tipadas
+- Maneja rechazos de Promise adecuadamente
+
+## Patrones
+- Usa el patrón Builder para creación de objetos complejos
+- Implementa el patrón Repository para acceso a datos
+- Utiliza el patrón Factory para creación de objetos
+- Aprovecha la inyección de dependencias
+- Usa el patrón Module para encapsulación 
