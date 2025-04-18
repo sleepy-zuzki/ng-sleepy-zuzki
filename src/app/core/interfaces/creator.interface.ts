@@ -5,4 +5,4 @@ export interface Creator {
   name: string;
   email: string;
   socials: Social[] | string;
-} 
+}

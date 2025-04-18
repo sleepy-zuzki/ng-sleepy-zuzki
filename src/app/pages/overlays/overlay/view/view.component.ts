@@ -35,11 +35,11 @@ export class ViewComponent implements OnInit {
           if (this.currentOverlay) {
             // Actualizar el servicio con el overlay actual
             this.overlayService.setCurrentOverlay(this.currentOverlay);
-            
+
             // Get the first layout from the overlay's layouts
             const layouts = this.currentOverlay.layouts;
             if (Array.isArray(layouts) && layouts.length > 0) {
-              this.currentLayout = layouts[1];
+              this.currentLayout = layouts[0];
 
               // Update the iframe source with the layout source URL
               if (this.viewElement && this.currentLayout) {
