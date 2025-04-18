@@ -1,4 +1,5 @@
 import { computed, Injectable, Signal, signal, WritableSignal, isSignal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Overlay } from '@core/models/overlay.model';
 import { Overlay as IOverlay } from '@core/interfaces/overlay.interface';
@@ -13,7 +14,7 @@ import { ITechnology } from '@core/interfaces/technology.interface';
 import { OverlayStatus } from '@core/enums/overlays.enum';
 import { LayoutStatus } from '@core/enums/layout.enum';
 import { LoadState } from '@core/enums/load-state.enum';
-import { Observable, catchError, finalize, map, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, finalize, map, of, switchMap, tap } from 'rxjs';
 
 /**
  * Interfaz para el mensaje de error
@@ -28,54 +29,75 @@ export interface ErrorMessage {
   providedIn: 'root'
 })
 export class GithubDataApiService {
-  // Señales de datos
-  #overlays: WritableSignal<Overlay[]> = signal([]);
-  #creators: WritableSignal<Creator[]> = signal([]);
-  #socials: WritableSignal<Social[]> = signal([]);
-  #layouts: WritableSignal<LayoutModel[]> = signal([]);
-  #technologies: WritableSignal<TechnologyModel[]> = signal([]);
-  // Señales computadas públicas para datos
-  overlays: Signal<Overlay[]> = computed(this.#overlays);
-  // Señales de estado de carga
-  #overlaysState: WritableSignal<LoadState> = signal(LoadState.INIT);
-  // Señales computadas públicas para estados de carga
-  overlaysState: Signal<LoadState> = computed(this.#overlaysState);
-  #creatorsState: WritableSignal<LoadState> = signal(LoadState.INIT);
-  creatorsState: Signal<LoadState> = computed(this.#creatorsState);
-  #socialsState: WritableSignal<LoadState> = signal(LoadState.INIT);
-  socialsState: Signal<LoadState> = computed(this.#socialsState);
-  #layoutsState: WritableSignal<LoadState> = signal(LoadState.INIT);
-  layoutsState: Signal<LoadState> = computed(this.#layoutsState);
-  #technologiesState: WritableSignal<LoadState> = signal(LoadState.INIT);
-  technologiesState: Signal<LoadState> = computed(this.#technologiesState);
-  creators: Signal<Creator[]> = computed(this.#creators);
-  socials: Signal<Social[]> = computed(this.#socials);
-  layouts: Signal<LayoutModel[]> = computed(this.#layouts);
-  technologies: Signal<TechnologyModel[]> = computed(this.#technologies);
-  // Señales de error
-  #overlaysError: WritableSignal<ErrorMessage | null> = signal(null);
-  // Señales computadas públicas para errores
-  overlaysError: Signal<ErrorMessage | null> = computed(this.#overlaysError);
-  #creatorsError: WritableSignal<ErrorMessage | null> = signal(null);
-  creatorsError: Signal<ErrorMessage | null> = computed(this.#creatorsError);
-  #socialsError: WritableSignal<ErrorMessage | null> = signal(null);
-  socialsError: Signal<ErrorMessage | null> = computed(this.#socialsError);
-  #layoutsError: WritableSignal<ErrorMessage | null> = signal(null);
-  layoutsError: Signal<ErrorMessage | null> = computed(this.#layoutsError);
-  #technologiesError: WritableSignal<ErrorMessage | null> = signal(null);
-  technologiesError: Signal<ErrorMessage | null> = computed(this.#technologiesError);
+  // Signals públicas para datos
+  overlays: Signal<Overlay[]>;
+  creators: Signal<Creator[]>;
+  socials: Signal<Social[]>;
+  layouts: Signal<LayoutModel[]>;
+  technologies: Signal<TechnologyModel[]>;
+  // Signals públicas para estados de carga
+  overlaysState: Signal<LoadState>;
+  creatorsState: Signal<LoadState>;
+  socialsState: Signal<LoadState>;
+  layoutsState: Signal<LoadState>;
+  technologiesState: Signal<LoadState>;
+  // Signals públicas para errores
+  overlaysError: Signal<ErrorMessage | null>;
+  creatorsError: Signal<ErrorMessage | null>;
+  socialsError: Signal<ErrorMessage | null>;
+  layoutsError: Signal<ErrorMessage | null>;
+  technologiesError: Signal<ErrorMessage | null>;
+  // BehaviorSubjects para datos
+  #overlaysSubject = new BehaviorSubject<Overlay[]>([]);
+  #creatorsSubject = new BehaviorSubject<Creator[]>([]);
+  #socialsSubject = new BehaviorSubject<Social[]>([]);
+  #layoutsSubject = new BehaviorSubject<LayoutModel[]>([]);
+  #technologiesSubject = new BehaviorSubject<TechnologyModel[]>([]);
+  // BehaviorSubjects para estados de carga
+  #overlaysStateSubject = new BehaviorSubject<LoadState>(LoadState.INIT);
+  #creatorsStateSubject = new BehaviorSubject<LoadState>(LoadState.INIT);
+  #socialsStateSubject = new BehaviorSubject<LoadState>(LoadState.INIT);
+  #layoutsStateSubject = new BehaviorSubject<LoadState>(LoadState.INIT);
+  #technologiesStateSubject = new BehaviorSubject<LoadState>(LoadState.INIT);
+  // BehaviorSubjects para errores
+  #overlaysErrorSubject = new BehaviorSubject<ErrorMessage | null>(null);
+  #creatorsErrorSubject = new BehaviorSubject<ErrorMessage | null>(null);
+  #socialsErrorSubject = new BehaviorSubject<ErrorMessage | null>(null);
+  #layoutsErrorSubject = new BehaviorSubject<ErrorMessage | null>(null);
+  #technologiesErrorSubject = new BehaviorSubject<ErrorMessage | null>(null);
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    // Inicializar signals para datos usando toSignal
+    this.overlays = toSignal(this.#overlaysSubject.asObservable(), { initialValue: [] });
+    this.creators = toSignal(this.#creatorsSubject.asObservable(), { initialValue: [] });
+    this.socials = toSignal(this.#socialsSubject.asObservable(), { initialValue: [] });
+    this.layouts = toSignal(this.#layoutsSubject.asObservable(), { initialValue: [] });
+    this.technologies = toSignal(this.#technologiesSubject.asObservable(), { initialValue: [] });
+
+    // Inicializar signals para estados de carga
+    this.overlaysState = toSignal(this.#overlaysStateSubject.asObservable(), { initialValue: LoadState.INIT });
+    this.creatorsState = toSignal(this.#creatorsStateSubject.asObservable(), { initialValue: LoadState.INIT });
+    this.socialsState = toSignal(this.#socialsStateSubject.asObservable(), { initialValue: LoadState.INIT });
+    this.layoutsState = toSignal(this.#layoutsStateSubject.asObservable(), { initialValue: LoadState.INIT });
+    this.technologiesState = toSignal(this.#technologiesStateSubject.asObservable(), { initialValue: LoadState.INIT });
+
+    // Inicializar signals para errores
+    this.overlaysError = toSignal(this.#overlaysErrorSubject.asObservable(), { initialValue: null });
+    this.creatorsError = toSignal(this.#creatorsErrorSubject.asObservable(), { initialValue: null });
+    this.socialsError = toSignal(this.#socialsErrorSubject.asObservable(), { initialValue: null });
+    this.layoutsError = toSignal(this.#layoutsErrorSubject.asObservable(), { initialValue: null });
+    this.technologiesError = toSignal(this.#technologiesErrorSubject.asObservable(), { initialValue: null });
+  }
 
   /**
    * Obtiene los overlays con toda su información relacionada
    * @param params Parámetros HTTP opcionales
    */
   fetchOverlays(params?: HttpParams): void {
-    this.#overlaysState.set(LoadState.LOADING);
-    this.#overlaysError.set(null);
+    this.#overlaysStateSubject.next(LoadState.LOADING);
+    this.#overlaysErrorSubject.next(null);
 
-    const availableCreators: Creator[] = this.#creators();
+    const availableCreators: Creator[] = this.#creatorsSubject.getValue();
 
     if (availableCreators.length === 0) {
       // Si no hay creadores, cargarlos primero
@@ -83,8 +105,8 @@ export class GithubDataApiService {
         .pipe(
           switchMap(() => this.fetchOverlaysWithLayouts(params, true)),
           finalize(() => {
-            if (this.#overlaysState() === LoadState.LOADING) {
-              this.#overlaysState.set(LoadState.LOADED);
+            if (this.#overlaysStateSubject.getValue() === LoadState.LOADING) {
+              this.#overlaysStateSubject.next(LoadState.LOADED);
             }
           })
         )
@@ -94,8 +116,8 @@ export class GithubDataApiService {
       this.fetchOverlaysWithLayouts(params, true)
         .pipe(
           finalize(() => {
-            if (this.#overlaysState() === LoadState.LOADING) {
-              this.#overlaysState.set(LoadState.LOADED);
+            if (this.#overlaysStateSubject.getValue() === LoadState.LOADING) {
+              this.#overlaysStateSubject.next(LoadState.LOADED);
             }
           })
         )
@@ -112,10 +134,10 @@ export class GithubDataApiService {
     params?: HttpParams,
     autoSubscribe = false
   ): Observable<Overlay[]> {
-    this.#overlaysState.set(LoadState.LOADING);
-    this.#overlaysError.set(null);
+    this.#overlaysStateSubject.next(LoadState.LOADING);
+    this.#overlaysErrorSubject.next(null);
 
-    const availableLayouts = this.#layouts();
+    const availableLayouts = this.#layoutsSubject.getValue();
 
     const observable = availableLayouts.length === 0
       ? this.fetchRawOverlays(params).pipe(
@@ -136,34 +158,34 @@ export class GithubDataApiService {
     params?: HttpParams,
     autoSubscribe = true
   ): Observable<Social[]> {
-    this.#socialsState.set(LoadState.LOADING);
-    this.#socialsError.set(null);
+    this.#socialsStateSubject.next(LoadState.LOADING);
+    this.#socialsErrorSubject.next(null);
 
     const observable = this.http.get<ISocial[]>('socials', { params }).pipe(
       map((response: ISocial[]): Social[] =>
         response.map(data => new Social(data))
       ),
       tap((socials: Social[]) => {
-        this.#socials.set(socials);
-        this.#socialsState.set(LoadState.LOADED);
+        this.#socialsSubject.next(socials);
+        this.#socialsStateSubject.next(LoadState.LOADED);
       }),
       catchError((error) => this.handleError(
         error,
-        this.#socialsError,
-        this.#socialsState,
+        this.#socialsErrorSubject,
+        this.#socialsStateSubject,
         'Error fetching socials',
         []
       )),
       finalize(() => {
-        if (this.#socialsState() === LoadState.LOADING) {
-          this.#socialsState.set(LoadState.LOADED);
+        if (this.#socialsStateSubject.getValue() === LoadState.LOADING) {
+          this.#socialsStateSubject.next(LoadState.LOADED);
         }
       })
     );
 
     if (autoSubscribe) {
       observable.subscribe();
-      return of(this.#socials());
+      return of(this.#socialsSubject.getValue());
     }
 
     return observable;
@@ -178,10 +200,10 @@ export class GithubDataApiService {
     params?: HttpParams,
     autoSubscribe = true
   ): Observable<Creator[]> {
-    this.#creatorsState.set(LoadState.LOADING);
-    this.#creatorsError.set(null);
+    this.#creatorsStateSubject.next(LoadState.LOADING);
+    this.#creatorsErrorSubject.next(null);
 
-    const availableSocials: Social[] = this.#socials();
+    const availableSocials: Social[] = this.#socialsSubject.getValue();
 
     const observable = availableSocials.length === 0
       ? this.fetchSocials(params, false).pipe(
@@ -191,15 +213,15 @@ export class GithubDataApiService {
 
     const finalObservable = observable.pipe(
       finalize(() => {
-        if (this.#creatorsState() === LoadState.LOADING) {
-          this.#creatorsState.set(LoadState.LOADED);
+        if (this.#creatorsStateSubject.getValue() === LoadState.LOADING) {
+          this.#creatorsStateSubject.next(LoadState.LOADED);
         }
       })
     );
 
     if (autoSubscribe) {
       finalObservable.subscribe();
-      return of(this.#creators());
+      return of(this.#creatorsSubject.getValue());
     }
 
     return finalObservable;
@@ -214,37 +236,37 @@ export class GithubDataApiService {
     params?: HttpParams,
     autoSubscribe = true
   ): Observable<LayoutModel[]> {
-    this.#layoutsState.set(LoadState.LOADING);
-    this.#layoutsError.set(null);
+    this.#layoutsStateSubject.next(LoadState.LOADING);
+    this.#layoutsErrorSubject.next(null);
 
     const observable = this.http.get<ILayout[]>('layouts', { params }).pipe(
       map((response: ILayout[]): LayoutModel[] => {
-        const overlays: Overlay[] = this.#overlays();
+        const overlays: Overlay[] = this.#overlaysSubject.getValue();
         return response
           .filter((data: ILayout) => data.status === LayoutStatus.ACTIVO)
           .map((data: ILayout) => new LayoutModel(data, overlays));
       }),
       tap((layouts: LayoutModel[]) => {
-        this.#layouts.set(layouts);
-        this.#layoutsState.set(LoadState.LOADED);
+        this.#layoutsSubject.next(layouts);
+        this.#layoutsStateSubject.next(LoadState.LOADED);
       }),
       catchError((error) => this.handleError(
         error,
-        this.#layoutsError,
-        this.#layoutsState,
+        this.#layoutsErrorSubject,
+        this.#layoutsStateSubject,
         'Error fetching layouts',
         []
       )),
       finalize(() => {
-        if (this.#layoutsState() === LoadState.LOADING) {
-          this.#layoutsState.set(LoadState.LOADED);
+        if (this.#layoutsStateSubject.getValue() === LoadState.LOADING) {
+          this.#layoutsStateSubject.next(LoadState.LOADED);
         }
       })
     );
 
     if (autoSubscribe) {
       observable.subscribe();
-      return of(this.#layouts());
+      return of(this.#layoutsSubject.getValue());
     }
 
     return observable;
@@ -253,10 +275,11 @@ export class GithubDataApiService {
   /**
    * Obtiene las tecnologías
    * @param params Parámetros HTTP opcionales
+   * Implementado con toSignal
    */
   fetchTechnologies(params?: HttpParams): void {
-    this.#technologiesState.set(LoadState.LOADING);
-    this.#technologiesError.set(null);
+    this.#technologiesStateSubject.next(LoadState.LOADING);
+    this.#technologiesErrorSubject.next(null);
 
     this.http.get<ITechnology[]>('tecnologies', { params })
       .pipe(
@@ -264,19 +287,19 @@ export class GithubDataApiService {
           response.map((data: ITechnology) => new TechnologyModel(data))
         ),
         tap((technologies: TechnologyModel[]) => {
-          this.#technologies.set(technologies);
-          this.#technologiesState.set(LoadState.LOADED);
+          this.#technologiesSubject.next(technologies);
+          this.#technologiesStateSubject.next(LoadState.LOADED);
         }),
         catchError((error) => this.handleError(
           error,
-          this.#technologiesError,
-          this.#technologiesState,
+          this.#technologiesErrorSubject,
+          this.#technologiesStateSubject,
           'Error fetching technologies',
           []
         )),
         finalize(() => {
-          if (this.#technologiesState() === LoadState.LOADING) {
-            this.#technologiesState.set(LoadState.LOADED);
+          if (this.#technologiesStateSubject.getValue() === LoadState.LOADING) {
+            this.#technologiesStateSubject.next(LoadState.LOADED);
           }
         })
       )
@@ -289,7 +312,7 @@ export class GithubDataApiService {
   private fetchRawOverlays(params?: HttpParams): Observable<Overlay[]> {
     return this.http.get<IOverlay[]>('overlays', { params }).pipe(
       map((response: IOverlay[]): Overlay[] => {
-        const creators: Creator[] = this.#creators();
+        const creators: Creator[] = this.#creatorsSubject.getValue();
         const overlays: Overlay[] = response
           .filter((data: IOverlay) => data.status === OverlayStatus.ACTIVO)
           .map((data: IOverlay) =>
@@ -298,12 +321,12 @@ export class GithubDataApiService {
         return overlays;
       }),
       tap((overlays: Overlay[]) => {
-        this.#overlays.set(overlays);
+        this.#overlaysSubject.next(overlays);
       }),
       catchError((error) => this.handleError(
         error,
-        this.#overlaysError,
-        this.#overlaysState,
+        this.#overlaysErrorSubject,
+        this.#overlaysStateSubject,
         'Error fetching raw overlays',
         []
       ))
@@ -316,22 +339,22 @@ export class GithubDataApiService {
   private loadOverlaysWithFullData(params?: HttpParams): Observable<Overlay[]> {
     return this.http.get<IOverlay[]>('overlays', { params }).pipe(
       map((response: IOverlay[]): Overlay[] => {
-        const creators: Creator[] = this.#creators();
-        const layouts: LayoutModel[] = this.#layouts();
+        const creators: Creator[] = this.#creatorsSubject.getValue();
+        const layouts: LayoutModel[] = this.#layoutsSubject.getValue();
         return response
           .filter((data: IOverlay) => data.status === OverlayStatus.ACTIVO)
           .map((data: IOverlay) => new Overlay(data, creators, layouts));
       }),
       tap((overlays: Overlay[]) => {
-        this.#overlays.set(overlays);
-        this.#overlaysState.set(LoadState.LOADED);
+        this.#overlaysSubject.next(overlays);
+        this.#overlaysStateSubject.next(LoadState.LOADED);
       }),
       catchError((error) => this.handleError(
         error,
-        this.#overlaysError,
-        this.#overlaysState,
+        this.#overlaysErrorSubject,
+        this.#overlaysStateSubject,
         'Error fetching overlays with full data',
-        this.#overlays()
+        this.#overlaysSubject.getValue()
       ))
     );
   }
@@ -342,17 +365,17 @@ export class GithubDataApiService {
   private loadCreators(params?: HttpParams): Observable<Creator[]> {
     return this.http.get<ICreator[]>('creators', { params }).pipe(
       map((response: ICreator[]): Creator[] => {
-        const socials = this.#socials();
+        const socials = this.#socialsSubject.getValue();
         return response.map(data => new Creator(data, socials));
       }),
       tap((creators: Creator[]) => {
-        this.#creators.set(creators);
-        this.#creatorsState.set(LoadState.LOADED);
+        this.#creatorsSubject.next(creators);
+        this.#creatorsStateSubject.next(LoadState.LOADED);
       }),
       catchError((error) => this.handleError(
         error,
-        this.#creatorsError,
-        this.#creatorsState,
+        this.#creatorsErrorSubject,
+        this.#creatorsStateSubject,
         'Error fetching creators',
         []
       ))
@@ -362,15 +385,15 @@ export class GithubDataApiService {
   /**
    * Método centralizado para manejar errores HTTP
    * @param error Error HTTP
-   * @param errorSignal Señal para almacenar el error
-   * @param stateSignal Señal para almacenar el estado
+   * @param errorSubject Subject para almacenar el error
+   * @param stateSubject Subject para almacenar el estado
    * @param logMessage Mensaje para log de error
    * @param fallbackData Datos por defecto en caso de error
    */
   private handleError<T>(
     error: any,
-    errorSignal: WritableSignal<ErrorMessage | null>,
-    stateSignal: WritableSignal<LoadState>,
+    errorSubject: BehaviorSubject<ErrorMessage | null>,
+    stateSubject: BehaviorSubject<LoadState>,
     logMessage: string,
     fallbackData: T
   ): Observable<T> {
@@ -384,8 +407,8 @@ export class GithubDataApiService {
       timestamp: new Date()
     };
 
-    errorSignal.set(errorMessage);
-    stateSignal.set(LoadState.ERROR);
+    errorSubject.next(errorMessage);
+    stateSubject.next(LoadState.ERROR);
 
     return of(fallbackData);
   }
