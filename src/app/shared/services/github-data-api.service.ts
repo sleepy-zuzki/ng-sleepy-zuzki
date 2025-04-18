@@ -14,19 +14,8 @@ import { ITechnology } from '@core/interfaces/technology.interface';
 import { OverlayStatus } from '@core/enums/overlays.enum';
 import { LayoutStatus } from '@core/enums/layout.enum';
 import { LoadState } from '@core/enums/load-state.enum';
+import { ErrorMessage } from '@core/interfaces/error-message.interface';
 import { BehaviorSubject, Observable, catchError, finalize, map, of, switchMap, tap } from 'rxjs';
-
-/**
- * Interfaz para el mensaje de error
- */
-export interface ErrorMessage {
-  /** Mensaje descriptivo del error */
-  message: string;
-  /** Código de estado HTTP (opcional) */
-  status?: number;
-  /** Momento en que ocurrió el error */
-  timestamp: Date;
-}
 
 /**
  * Servicio para obtener datos desde la API de GitHub

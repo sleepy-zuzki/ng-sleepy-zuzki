@@ -1,9 +1,11 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, Signal, signal, WritableSignal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, Signal } from '@angular/core';
 import { GithubDataApiService } from '@services/github-data-api.service';
 import { Overlay } from '@core/models/overlay.model';
 import { SkeletonComponent } from '@components/projects/project/skeleton/skeleton.component';
 import { OverlayComponent } from '@components/overlays/overlay/overlay.component';
 import { OverlayService } from '@services/overlay.service';
+import { LoadState } from '@core/enums/load-state.enum';
+import { ErrorMessage } from '@core/interfaces/error-message.interface';
 
 @Component({
   selector: 'app-overlays',
@@ -16,15 +18,21 @@ import { OverlayService } from '@services/overlay.service';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class OverlaysComponent implements OnInit {
+  // Señales obtenidas del servicio
   overlays: Signal<Overlay[]>;
-  loading: WritableSignal<boolean> = signal(true);
-  error: WritableSignal<boolean> = signal(false);
+  loadState: Signal<LoadState>;
+  errorInfo: Signal<ErrorMessage | null>;
+  
+  // Valores constantes para el enum LoadState, accesibles desde el template
+  readonly LOAD_STATE = LoadState;
 
   constructor(
     private githubDataApi: GithubDataApiService,
     private overlayService: OverlayService
   ) {
     this.overlays = this.githubDataApi.overlays;
+    this.loadState = this.githubDataApi.overlaysState;
+    this.errorInfo = this.githubDataApi.overlaysError;
   }
 
   ngOnInit(): void {
@@ -32,23 +40,16 @@ export class OverlaysComponent implements OnInit {
     this.overlayService.setCurrentOverlay(new Overlay());
   }
 
+  /**
+   * Carga los overlays usando el servicio de datos
+   */
   loadOverlays(): void {
-    this.loading.set(true);
-    this.error.set(false);
-
     this.githubDataApi.fetchOverlays();
-
-    // Simulamos espera para mostrar los skeletons brevemente
-    setTimeout(() => {
-      if (this.overlays().length === 0) {
-        // Si después de 2 segundos no hay datos, asumimos que puede haber un error
-        // Normalmente esto sería manejado con un observable de error del servicio
-        this.error.set(true);
-      }
-      this.loading.set(false);
-    }, 2000);
   }
 
+  /**
+   * Reintentar la carga cuando hay errores
+   */
   retry(): void {
     this.loadOverlays();
   }
