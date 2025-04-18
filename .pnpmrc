@@ -1,0 +1,5 @@
+engine-strict=true
+node-version=22
+use-node-version=22
+package-import-method=clone-or-copy
+resolution-mode=highest
