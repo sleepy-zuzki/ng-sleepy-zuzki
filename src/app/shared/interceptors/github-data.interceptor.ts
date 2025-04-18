@@ -9,7 +9,7 @@ import { environment } from '@env/environment';
 import { Observable } from 'rxjs';
 
 export const GithubDataInterceptor: HttpInterceptorFn = (
-  req: HttpRequest<unknown>, 
+  req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> => {
   // Verificar si la URL comienza con 'data/'
@@ -19,7 +19,7 @@ export const GithubDataInterceptor: HttpInterceptorFn = (
     'Content-Type': 'application/json'
   });
 
-  const url: string = `${environment.GITHUB_DATA_URL}/${req.url}`;
+  const url: string = `https://github-worker.zuzki.dev/${req.url}`;
   const newRequest: HttpRequest<unknown> = req.clone({ url, headers });
   return next(newRequest);
 };
