@@ -1,5 +1,5 @@
-import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { computed, Injectable, Signal, signal, WritableSignal, isSignal } from '@angular/core';
+import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Overlay } from '@core/models/overlay.model';
 import { Overlay as IOverlay } from '@core/interfaces/overlay.interface';
 import { Creator } from '@core/models/creator.model';
@@ -12,179 +12,381 @@ import { TechnologyModel } from '@core/models/technology.model';
 import { ITechnology } from '@core/interfaces/technology.interface';
 import { OverlayStatus } from '@core/enums/overlays.enum';
 import { LayoutStatus } from '@core/enums/layout.enum';
+import { LoadState } from '@core/enums/load-state.enum';
+import { Observable, catchError, finalize, map, of, switchMap, tap } from 'rxjs';
+
+/**
+ * Interfaz para el mensaje de error
+ */
+export interface ErrorMessage {
+  message: string;
+  status?: number;
+  timestamp: Date;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class GithubDataApiService {
+  // Señales de datos
   #overlays: WritableSignal<Overlay[]> = signal([]);
   #creators: WritableSignal<Creator[]> = signal([]);
   #socials: WritableSignal<Social[]> = signal([]);
   #layouts: WritableSignal<LayoutModel[]> = signal([]);
   #technologies: WritableSignal<TechnologyModel[]> = signal([]);
-
+  // Señales computadas públicas para datos
   overlays: Signal<Overlay[]> = computed(this.#overlays);
+  // Señales de estado de carga
+  #overlaysState: WritableSignal<LoadState> = signal(LoadState.INIT);
+  // Señales computadas públicas para estados de carga
+  overlaysState: Signal<LoadState> = computed(this.#overlaysState);
+  #creatorsState: WritableSignal<LoadState> = signal(LoadState.INIT);
+  creatorsState: Signal<LoadState> = computed(this.#creatorsState);
+  #socialsState: WritableSignal<LoadState> = signal(LoadState.INIT);
+  socialsState: Signal<LoadState> = computed(this.#socialsState);
+  #layoutsState: WritableSignal<LoadState> = signal(LoadState.INIT);
+  layoutsState: Signal<LoadState> = computed(this.#layoutsState);
+  #technologiesState: WritableSignal<LoadState> = signal(LoadState.INIT);
+  technologiesState: Signal<LoadState> = computed(this.#technologiesState);
   creators: Signal<Creator[]> = computed(this.#creators);
   socials: Signal<Social[]> = computed(this.#socials);
   layouts: Signal<LayoutModel[]> = computed(this.#layouts);
   technologies: Signal<TechnologyModel[]> = computed(this.#technologies);
+  // Señales de error
+  #overlaysError: WritableSignal<ErrorMessage | null> = signal(null);
+  // Señales computadas públicas para errores
+  overlaysError: Signal<ErrorMessage | null> = computed(this.#overlaysError);
+  #creatorsError: WritableSignal<ErrorMessage | null> = signal(null);
+  creatorsError: Signal<ErrorMessage | null> = computed(this.#creatorsError);
+  #socialsError: WritableSignal<ErrorMessage | null> = signal(null);
+  socialsError: Signal<ErrorMessage | null> = computed(this.#socialsError);
+  #layoutsError: WritableSignal<ErrorMessage | null> = signal(null);
+  layoutsError: Signal<ErrorMessage | null> = computed(this.#layoutsError);
+  #technologiesError: WritableSignal<ErrorMessage | null> = signal(null);
+  technologiesError: Signal<ErrorMessage | null> = computed(this.#technologiesError);
 
   constructor(private http: HttpClient) { }
 
+  /**
+   * Obtiene los overlays con toda su información relacionada
+   * @param params Parámetros HTTP opcionales
+   */
   fetchOverlays(params?: HttpParams): void {
-    // Verificar si hay creadores cargados
+    this.#overlaysState.set(LoadState.LOADING);
+    this.#overlaysError.set(null);
+
     const availableCreators: Creator[] = this.#creators();
 
     if (availableCreators.length === 0) {
       // Si no hay creadores, cargarlos primero
-      this.fetchCreators();
-      // Esperar a que los creadores estén cargados antes de cargar overlays
-      setTimeout(() => this.fetchOverlaysWithLayouts(params), 500);
+      this.fetchCreators(params, true)
+        .pipe(
+          switchMap(() => this.fetchOverlaysWithLayouts(params, true)),
+          finalize(() => {
+            if (this.#overlaysState() === LoadState.LOADING) {
+              this.#overlaysState.set(LoadState.LOADED);
+            }
+          })
+        )
+        .subscribe();
     } else {
       // Si ya hay creadores, cargar overlays con layouts
-      this.fetchOverlaysWithLayouts(params);
+      this.fetchOverlaysWithLayouts(params, true)
+        .pipe(
+          finalize(() => {
+            if (this.#overlaysState() === LoadState.LOADING) {
+              this.#overlaysState.set(LoadState.LOADED);
+            }
+          })
+        )
+        .subscribe();
     }
   }
 
-  // Método para obtener overlays con layouts
-  private fetchOverlaysWithLayouts(params?: HttpParams): void {
-    // Verificar si hay layouts cargados
+  /**
+   * Obtiene todos los overlays con sus layouts
+   * @param params Parámetros HTTP opcionales
+   * @param autoSubscribe Si es true, autogestiona la suscripción
+   */
+  fetchOverlaysWithLayouts(
+    params?: HttpParams,
+    autoSubscribe = false
+  ): Observable<Overlay[]> {
+    this.#overlaysState.set(LoadState.LOADING);
+    this.#overlaysError.set(null);
+
     const availableLayouts = this.#layouts();
 
-    if (availableLayouts.length === 0) {
-      // Si no hay layouts, obtener overlays básicos primero
-      this.fetchRawOverlays(params, () => {
-        // Luego cargar layouts
-        this.fetchLayouts(params);
-        // Finalmente, actualizar overlays con layouts completos
-        setTimeout(() => this.loadOverlaysWithFullData(params), 300);
-      });
-    } else {
-      // Si ya hay layouts, cargar overlays con datos completos
-      this.loadOverlaysWithFullData(params);
+    const observable = availableLayouts.length === 0
+      ? this.fetchRawOverlays(params).pipe(
+          switchMap(() => this.fetchLayouts(params, false)),
+          switchMap(() => this.loadOverlaysWithFullData(params))
+        )
+      : this.loadOverlaysWithFullData(params);
+
+    return autoSubscribe ? observable : observable;
+  }
+
+  /**
+   * Obtiene las redes sociales
+   * @param params Parámetros HTTP opcionales
+   * @param autoSubscribe Si es true, autogestiona la suscripción
+   */
+  fetchSocials(
+    params?: HttpParams,
+    autoSubscribe = true
+  ): Observable<Social[]> {
+    this.#socialsState.set(LoadState.LOADING);
+    this.#socialsError.set(null);
+
+    const observable = this.http.get<ISocial[]>('socials', { params }).pipe(
+      map((response: ISocial[]): Social[] =>
+        response.map(data => new Social(data))
+      ),
+      tap((socials: Social[]) => {
+        this.#socials.set(socials);
+        this.#socialsState.set(LoadState.LOADED);
+      }),
+      catchError((error) => this.handleError(
+        error,
+        this.#socialsError,
+        this.#socialsState,
+        'Error fetching socials',
+        []
+      )),
+      finalize(() => {
+        if (this.#socialsState() === LoadState.LOADING) {
+          this.#socialsState.set(LoadState.LOADED);
+        }
+      })
+    );
+
+    if (autoSubscribe) {
+      observable.subscribe();
+      return of(this.#socials());
     }
+
+    return observable;
   }
 
-  // Método para cargar overlays con datos completos (creadores y layouts)
-  private loadOverlaysWithFullData(params?: HttpParams): void {
-    this.http.get<IOverlay[]>('overlays', { params })
-      .subscribe({
-        next: (response: IOverlay[]): void => {
-          const creators: Creator[] = this.#creators();
-          const layouts: LayoutModel[] = this.#layouts();
-          const overlays: Overlay[] = response
-          .filter((data: IOverlay) => data.status === OverlayStatus.ACTIVO)
-          .map((data: IOverlay) => new Overlay(data, creators, layouts));
-          this.#overlays.set(overlays);
-        },
-        error: (error): void => {
-          console.error('Error fetching overlays with full data:', error);
-          // Mantener overlays existentes en caso de error
-        }
-      });
-  }
+  /**
+   * Obtiene los creadores con sus redes sociales
+   * @param params Parámetros HTTP opcionales
+   * @param autoSubscribe Si es true, autogestiona la suscripción
+   */
+  fetchCreators(
+    params?: HttpParams,
+    autoSubscribe = true
+  ): Observable<Creator[]> {
+    this.#creatorsState.set(LoadState.LOADING);
+    this.#creatorsError.set(null);
 
-  // Método para obtener datos básicos de overlays (sin procesar layouts)
-  private fetchRawOverlays(params?: HttpParams, callback?: () => void): void {
-    this.http.get<IOverlay[]>('overlays', { params })
-      .subscribe({
-        next: (response: IOverlay[]): void => {
-          const creators: Creator[] = this.#creators();
-          // Crear overlays básicos sin procesar layouts
-          const overlays: Overlay[] = response
-          .filter((data: IOverlay) => data.status === OverlayStatus.ACTIVO)
-          .map((data: IOverlay) => new Overlay({...data, layouts: ''}, creators));
-          this.#overlays.set(overlays);
-          if (callback) callback();
-        },
-        error: (error): void => {
-          console.error('Error fetching raw overlays:', error);
-          this.#overlays.set([]);
-          if (callback) callback();
-        }
-      });
-  }
-
-  fetchSocials(params?: HttpParams): void {
-    this.http.get<ISocial[]>('socials', { params })
-      .subscribe({
-        next: (response: ISocial[]): void => {
-          const socials: Social[] = response.map(data => new Social(data));
-          this.#socials.set(socials);
-        },
-        error: (error): void => {
-          console.error('Error fetching socials:', error);
-          this.#socials.set([]);
-        }
-      });
-  }
-
-  fetchCreators(params?: HttpParams): void {
-    // Verificar si hay redes sociales cargadas
     const availableSocials: Social[] = this.#socials();
 
-    if (availableSocials.length === 0) {
-      // Si no hay redes sociales, cargarlas primero y luego cargar los creadores
-      this.fetchSocials();
+    const observable = availableSocials.length === 0
+      ? this.fetchSocials(params, false).pipe(
+          switchMap(() => this.loadCreators(params))
+        )
+      : this.loadCreators(params);
 
-      // Esperar a que las redes sociales estén cargadas antes de cargar creadores
-      setTimeout(() => this.loadCreators(params), 300);
-    } else {
-      // Si ya hay redes sociales, cargar creadores directamente
-      this.loadCreators(params);
-    }
-  }
-
-  // Método privado para cargar creadores (evita duplicación de código)
-  private loadCreators(params?: HttpParams): void {
-    this.http.get<ICreator[]>('creators', { params })
-      .subscribe({
-        next: (response: ICreator[]): void => {
-          const socials = this.#socials();
-          const creators = response.map(data => new Creator(data, socials));
-          this.#creators.set(creators);
-        },
-        error: (error): void => {
-          console.error('Error fetching creators:', error);
-          this.#creators.set([]);
+    const finalObservable = observable.pipe(
+      finalize(() => {
+        if (this.#creatorsState() === LoadState.LOADING) {
+          this.#creatorsState.set(LoadState.LOADED);
         }
-      });
+      })
+    );
+
+    if (autoSubscribe) {
+      finalObservable.subscribe();
+      return of(this.#creators());
+    }
+
+    return finalObservable;
   }
 
-  fetchLayouts(params?: HttpParams): void {
-    // Siempre cargar layouts directamente
-    this.loadLayouts(params);
-  }
+  /**
+   * Obtiene los layouts
+   * @param params Parámetros HTTP opcionales
+   * @param autoSubscribe Si es true, autogestiona la suscripción
+   */
+  fetchLayouts(
+    params?: HttpParams,
+    autoSubscribe = true
+  ): Observable<LayoutModel[]> {
+    this.#layoutsState.set(LoadState.LOADING);
+    this.#layoutsError.set(null);
 
-  // Método privado para cargar layouts
-  private loadLayouts(params?: HttpParams): void {
-    this.http.get<ILayout[]>('layouts', { params })
-      .subscribe({
-        next: (response: ILayout[]): void => {
-          const overlays: Overlay[] = this.#overlays();
-          const layouts: LayoutModel[] = response
+    const observable = this.http.get<ILayout[]>('layouts', { params }).pipe(
+      map((response: ILayout[]): LayoutModel[] => {
+        const overlays: Overlay[] = this.#overlays();
+        return response
           .filter((data: ILayout) => data.status === LayoutStatus.ACTIVO)
           .map((data: ILayout) => new LayoutModel(data, overlays));
-          this.#layouts.set(layouts);
-        },
-        error: (error): void => {
-          console.error('Error fetching layouts:', error);
-          this.#layouts.set([]);
+      }),
+      tap((layouts: LayoutModel[]) => {
+        this.#layouts.set(layouts);
+        this.#layoutsState.set(LoadState.LOADED);
+      }),
+      catchError((error) => this.handleError(
+        error,
+        this.#layoutsError,
+        this.#layoutsState,
+        'Error fetching layouts',
+        []
+      )),
+      finalize(() => {
+        if (this.#layoutsState() === LoadState.LOADING) {
+          this.#layoutsState.set(LoadState.LOADED);
         }
-      });
+      })
+    );
+
+    if (autoSubscribe) {
+      observable.subscribe();
+      return of(this.#layouts());
+    }
+
+    return observable;
   }
 
+  /**
+   * Obtiene las tecnologías
+   * @param params Parámetros HTTP opcionales
+   */
   fetchTechnologies(params?: HttpParams): void {
+    this.#technologiesState.set(LoadState.LOADING);
+    this.#technologiesError.set(null);
+
     this.http.get<ITechnology[]>('tecnologies', { params })
-      .subscribe({
-        next: (response: ITechnology[]): void => {
-          const technologies: TechnologyModel[] = response.map((data: ITechnology) => new TechnologyModel(data));
+      .pipe(
+        map((response: ITechnology[]): TechnologyModel[] =>
+          response.map((data: ITechnology) => new TechnologyModel(data))
+        ),
+        tap((technologies: TechnologyModel[]) => {
           this.#technologies.set(technologies);
-        },
-        error: (error): void => {
-          console.error('Error fetching technologies:', error);
-          this.#technologies.set([]);
-        }
-      });
+          this.#technologiesState.set(LoadState.LOADED);
+        }),
+        catchError((error) => this.handleError(
+          error,
+          this.#technologiesError,
+          this.#technologiesState,
+          'Error fetching technologies',
+          []
+        )),
+        finalize(() => {
+          if (this.#technologiesState() === LoadState.LOADING) {
+            this.#technologiesState.set(LoadState.LOADED);
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  /**
+   * Obtiene los datos básicos de overlays sin procesar layouts
+   */
+  private fetchRawOverlays(params?: HttpParams): Observable<Overlay[]> {
+    return this.http.get<IOverlay[]>('overlays', { params }).pipe(
+      map((response: IOverlay[]): Overlay[] => {
+        const creators: Creator[] = this.#creators();
+        const overlays: Overlay[] = response
+          .filter((data: IOverlay) => data.status === OverlayStatus.ACTIVO)
+          .map((data: IOverlay) =>
+            new Overlay({...data, layouts: ''}, creators)
+          );
+        return overlays;
+      }),
+      tap((overlays: Overlay[]) => {
+        this.#overlays.set(overlays);
+      }),
+      catchError((error) => this.handleError(
+        error,
+        this.#overlaysError,
+        this.#overlaysState,
+        'Error fetching raw overlays',
+        []
+      ))
+    );
+  }
+
+  /**
+   * Carga overlays con datos completos (creadores y layouts)
+   */
+  private loadOverlaysWithFullData(params?: HttpParams): Observable<Overlay[]> {
+    return this.http.get<IOverlay[]>('overlays', { params }).pipe(
+      map((response: IOverlay[]): Overlay[] => {
+        const creators: Creator[] = this.#creators();
+        const layouts: LayoutModel[] = this.#layouts();
+        return response
+          .filter((data: IOverlay) => data.status === OverlayStatus.ACTIVO)
+          .map((data: IOverlay) => new Overlay(data, creators, layouts));
+      }),
+      tap((overlays: Overlay[]) => {
+        this.#overlays.set(overlays);
+        this.#overlaysState.set(LoadState.LOADED);
+      }),
+      catchError((error) => this.handleError(
+        error,
+        this.#overlaysError,
+        this.#overlaysState,
+        'Error fetching overlays with full data',
+        this.#overlays()
+      ))
+    );
+  }
+
+  /**
+   * Carga los creadores con las redes sociales disponibles
+   */
+  private loadCreators(params?: HttpParams): Observable<Creator[]> {
+    return this.http.get<ICreator[]>('creators', { params }).pipe(
+      map((response: ICreator[]): Creator[] => {
+        const socials = this.#socials();
+        return response.map(data => new Creator(data, socials));
+      }),
+      tap((creators: Creator[]) => {
+        this.#creators.set(creators);
+        this.#creatorsState.set(LoadState.LOADED);
+      }),
+      catchError((error) => this.handleError(
+        error,
+        this.#creatorsError,
+        this.#creatorsState,
+        'Error fetching creators',
+        []
+      ))
+    );
+  }
+
+  /**
+   * Método centralizado para manejar errores HTTP
+   * @param error Error HTTP
+   * @param errorSignal Señal para almacenar el error
+   * @param stateSignal Señal para almacenar el estado
+   * @param logMessage Mensaje para log de error
+   * @param fallbackData Datos por defecto en caso de error
+   */
+  private handleError<T>(
+    error: any,
+    errorSignal: WritableSignal<ErrorMessage | null>,
+    stateSignal: WritableSignal<LoadState>,
+    logMessage: string,
+    fallbackData: T
+  ): Observable<T> {
+    console.error(logMessage, error);
+
+    const errorMessage: ErrorMessage = {
+      message: error instanceof HttpErrorResponse
+        ? `${error.status}: ${error.statusText}`
+        : error?.message || 'Unknown error',
+      status: error instanceof HttpErrorResponse ? error.status : undefined,
+      timestamp: new Date()
+    };
+
+    errorSignal.set(errorMessage);
+    stateSignal.set(LoadState.ERROR);
+
+    return of(fallbackData);
   }
 }
