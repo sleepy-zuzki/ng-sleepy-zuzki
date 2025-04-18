@@ -1,4 +1,4 @@
-import { computed, Injectable, Signal, signal, WritableSignal, isSignal } from '@angular/core';
+import { Injectable, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Overlay } from '@core/models/overlay.model';
