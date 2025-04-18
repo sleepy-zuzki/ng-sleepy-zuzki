@@ -1,11 +1,12 @@
 import { Overlay as IOverlay } from '@core/interfaces/overlay.interface';
 import { Creator } from '@core/models/creator.model';
 import { LayoutModel } from '@core/models/layout.model';
+import { OverlayStatus } from '@core/enums/overlays.enum';
 
 export class Overlay implements IOverlay {
   #id: string;
   #name: string;
-  #status: string;
+  #status: OverlayStatus;
   #preview: string;
   #owner: string | Creator;
   #creator: string | Creator;
@@ -15,32 +16,32 @@ export class Overlay implements IOverlay {
   constructor(data?: Partial<IOverlay>, availableCreators?: Creator[], availableLayouts?: LayoutModel[]) {
     this.#id = data?.id ?? '';
     this.#name = data?.name ?? '';
-    this.#status = data?.status ?? '';
+    this.#status = data?.status as OverlayStatus ?? OverlayStatus.BORRADOR;
     this.#preview = data?.preview ?? '';
-    
+
     // Procesar owner
     if (typeof data?.owner === 'string' && availableCreators?.length) {
       this.#owner = availableCreators.find(creator => creator.id === data.owner) || data.owner;
     } else {
       this.#owner = data?.owner ?? '';
     }
-    
+
     // Procesar creator
     if (typeof data?.creator === 'string' && availableCreators?.length) {
       this.#creator = availableCreators.find(creator => creator.id === data.creator) || data.creator;
     } else {
       this.#creator = data?.creator ?? '';
     }
-    
+
     this.#technologies = data?.technologies ?? '';
-    
+
     // Procesar layouts
     if (typeof data?.layouts === 'string' && availableLayouts?.length) {
       this.#layouts = data.layouts
-        .split(',')
-        .filter(id => id !== '')
-        .map(id => availableLayouts.find(layout => layout.id === id))
-        .filter((layout): layout is LayoutModel => layout !== undefined);
+      .split(',')
+      .filter(id => id !== '')
+      .map(id => availableLayouts.find(layout => layout.id === id))
+      .filter((layout): layout is LayoutModel => layout !== undefined);
     } else if (Array.isArray(data?.layouts)) {
       this.#layouts = data.layouts;
     } else {
@@ -64,11 +65,11 @@ export class Overlay implements IOverlay {
     this.#name = value;
   }
 
-  get status(): string {
+  get status(): OverlayStatus {
     return this.#status;
   }
 
-  set status(value: string) {
+  set status(value: OverlayStatus) {
     this.#status = value;
   }
 
@@ -124,4 +125,4 @@ export class Overlay implements IOverlay {
       layouts: this.#layouts
     };
   }
-} 
+}

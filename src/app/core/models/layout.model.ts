@@ -1,3 +1,4 @@
+import { LayoutStatus } from '@core/enums/layout.enum';
 import { ILayout } from '../interfaces/layout.interface';
 import { Overlay } from '@core/models/overlay.model';
 
@@ -5,22 +6,22 @@ export class LayoutModel implements ILayout {
   #id: string;
   #name: string;
   #overlays: string | Overlay;
-  #status: string;
+  #status: LayoutStatus;
   #preview: string;
   #source: string;
 
   constructor(data?: ILayout, availableOverlays?: Overlay[]) {
     this.#id = data?.id || '';
     this.#name = data?.name || '';
-    
+
     // Procesar overlay
     if (typeof data?.overlays === 'string' && availableOverlays?.length) {
       this.#overlays = availableOverlays.find(overlay => overlay.id === data.overlays) || data.overlays;
     } else {
       this.#overlays = data?.overlays || '';
     }
-    
-    this.#status = data?.status || '';
+
+    this.#status = data?.status as LayoutStatus ?? LayoutStatus.BORRADOR;
     this.#preview = data?.preview || '';
     this.#source = data?.source || '';
   }
@@ -49,11 +50,11 @@ export class LayoutModel implements ILayout {
     this.#overlays = value;
   }
 
-  public get status(): string {
+  public get status(): LayoutStatus {
     return this.#status;
   }
 
-  public set status(value: string) {
+  public set status(value: LayoutStatus) {
     this.#status = value;
   }
 
@@ -72,4 +73,4 @@ export class LayoutModel implements ILayout {
   public set source(value: string) {
     this.#source = value;
   }
-} 
+}

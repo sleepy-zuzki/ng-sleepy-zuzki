@@ -10,6 +10,8 @@ import { LayoutModel } from '@core/models/layout.model';
 import { ILayout } from '@core/interfaces/layout.interface';
 import { TechnologyModel } from '@core/models/technology.model';
 import { ITechnology } from '@core/interfaces/technology.interface';
+import { OverlayStatus } from '@core/enums/overlays.enum';
+import { LayoutStatus } from '@core/enums/layout.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -70,7 +72,9 @@ export class GithubDataApiService {
         next: (response: IOverlay[]): void => {
           const creators: Creator[] = this.#creators();
           const layouts: LayoutModel[] = this.#layouts();
-          const overlays: Overlay[] = response.map(data => new Overlay(data, creators, layouts));
+          const overlays: Overlay[] = response
+          .filter((data: IOverlay) => data.status === OverlayStatus.ACTIVO)
+          .map((data: IOverlay) => new Overlay(data, creators, layouts));
           this.#overlays.set(overlays);
         },
         error: (error): void => {
@@ -87,7 +91,9 @@ export class GithubDataApiService {
         next: (response: IOverlay[]): void => {
           const creators: Creator[] = this.#creators();
           // Crear overlays básicos sin procesar layouts
-          const overlays: Overlay[] = response.map(data => new Overlay({...data, layouts: ''}, creators));
+          const overlays: Overlay[] = response
+          .filter((data: IOverlay) => data.status === OverlayStatus.ACTIVO)
+          .map((data: IOverlay) => new Overlay({...data, layouts: ''}, creators));
           this.#overlays.set(overlays);
           if (callback) callback();
         },
@@ -156,7 +162,9 @@ export class GithubDataApiService {
       .subscribe({
         next: (response: ILayout[]): void => {
           const overlays: Overlay[] = this.#overlays();
-          const layouts: LayoutModel[] = response.filter((data: ILayout) => data.status !== 'Active').map((data: ILayout) => new LayoutModel(data, overlays));
+          const layouts: LayoutModel[] = response
+          .filter((data: ILayout) => data.status === LayoutStatus.ACTIVO)
+          .map((data: ILayout) => new LayoutModel(data, overlays));
           this.#layouts.set(layouts);
         },
         error: (error): void => {
