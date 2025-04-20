@@ -18,10 +18,10 @@
         @if (overlayService.overlayLayouts().length > 0) {
           <wa-drawer #drawer label="Vistas" with-header with-footer class="drawer-overview">
             <main>
-              @for (view of overlayService.overlayLayouts(); track view.id) {
-                <wa-card with-image class="card-body" title="{{ view.name }}: Haz clic para seleccionar esta vista">
-                  <img src="{{ view.preview }}" height="100" slot="image" alt="Placeholder"/>
-                  <p><b>{{ view.name }}</b></p>
+              @for (layout of overlayService.overlayLayouts(); track layout.id) {
+                <wa-card (click)="changeLayout(layout.id)" with-image class="card-body" title="{{ layout.name }}: Haz clic para seleccionar esta vista">
+                  <img src="{{ layout.preview }}" height="100" slot="image" alt="Placeholder"/>
+                  <p><b>{{ layout.name }}</b></p>
                 </wa-card>
               }
             </main>
@@ -36,11 +36,9 @@
         }
       </div>
     </div>
-
   </section>
 
   <main class="h-full p-0">
     <router-outlet/>
   </main>
 </wa-page>
-

@@ -2,11 +2,10 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA, effect,
   ElementRef,
-  OnInit,
   Signal,
   ViewChild
 } from '@angular/core';
-import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Overlay } from '@core/models/overlay.model';
 import { GithubDataApiService } from '@services/github-data-api.service';
 import { LayoutModel } from '@core/models/layout.model';
@@ -22,37 +21,32 @@ import { OverlayService } from '@services/overlay.service';
 export class AppComponent {
   @ViewChild('drawer') drawer?: ElementRef;
   title: string = 'Sleepy Zuzki';
-  currentOverlay: Overlay = new Overlay();
-  overlayLayouts: LayoutModel[] | string = [];
   readonly overlays: Signal<Overlay[]>;
 
   constructor (
-    private route: ActivatedRoute,
     readonly apiService: GithubDataApiService,
     readonly overlayService: OverlayService
   ) {
     this.overlays = this.apiService.overlays;
-
-    effect(() => {
-      if (this.overlays() && this.overlays().length > 0) {
-        // Find the overlay
-        const overlay_id: string | null = this.route.snapshot.paramMap.get('overlay_id');
-        if (overlay_id !== null) {
-          const overlay: Overlay | undefined = this.overlays().find(overlay => overlay.id === overlay_id);
-          if (overlay) {
-            this.currentOverlay = overlay;
-            if (this.currentOverlay.layouts !== 'string') {
-              this.overlayLayouts = this.currentOverlay.layouts;
-            }
-          }
-        }
-      }
-    });
   }
 
   openDrawer(): void {
     if (this.drawer) {
       this.drawer.nativeElement.open = true;
+    }
+  }
+
+  closeDrawer(): void {
+    if (this.drawer) {
+      this.drawer.nativeElement.open = false;
+    }
+  }
+
+  changeLayout(layout_id: string): void {
+    const reqLayout: LayoutModel | undefined = this.overlayService.overlayLayouts().find((layout: LayoutModel) => layout.id === layout_id);
+    if (reqLayout) {
+      this.overlayService.setCurrentLayout(reqLayout);
+      this.closeDrawer();
     }
   }
 }
