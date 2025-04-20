@@ -17,6 +17,7 @@
   <div slot="footer" class="flex justify-center">
     <a [routerLink]="['/overlays', overlay()?.id]"
        routerLinkActive="active"
+       (click)="changeLayout()"
        ariaCurrentWhenActive="page">
       <wa-button variant="brand" pill>Ver overlay</wa-button>
     </a>

@@ -22,7 +22,7 @@ export class OverlaysComponent implements OnInit {
   overlays: Signal<Overlay[]>;
   loadState: Signal<LoadState>;
   errorInfo: Signal<ErrorMessage | null>;
-  
+
   // Valores constantes para el enum LoadState, accesibles desde el template
   readonly LOAD_STATE = LoadState;
 

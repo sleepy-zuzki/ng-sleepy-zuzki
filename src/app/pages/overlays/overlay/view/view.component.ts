@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, ElementRef, Signal, ViewChild } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, ElementRef, Signal, ViewChild, AfterViewInit } from '@angular/core'; // Re-added AfterViewInit
 import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
@@ -14,7 +14,7 @@ import { OverlayService } from '@services/overlay.service';
   styleUrl: './view.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class ViewComponent {
+export class ViewComponent implements AfterViewInit { // Added implements AfterViewInit
   overlays: Signal<Overlay[]>;
   overlayId: Signal<string | null>;
   currentOverlay: Overlay | null = null;
@@ -31,6 +31,7 @@ export class ViewComponent {
       { initialValue: null }
     );
 
+    // Effect 1: Set current overlay based on route and available overlays
     effect((): void => {
       const currentOverlayId: string | null = this.overlayId();
       const availableOverlays: Overlay[] = this.overlays();
@@ -40,45 +41,37 @@ export class ViewComponent {
           (overlay: Overlay) => overlay.id === currentOverlayId
         ) ?? null;
 
-        // Set the overlay in the service (this handles setting layouts too)
         this.overlayService.setCurrentOverlay(this.currentOverlay);
 
         if (this.currentOverlay) {
-          // Get layouts *from the service* after setting the overlay
           const layouts = this.overlayService.overlayLayouts();
           if (layouts.length > 0) {
-             // Set the first layout as the current one initially
             this.overlayService.setCurrentLayout(layouts[0]);
           } else {
-            // Ensure currentLayout is null if no layouts exist for this overlay
             this.overlayService.setCurrentLayout(null);
           }
         }
-        // No 'else' needed here for setting service state,
-        // because setCurrentOverlay(null) handles clearing layouts.
-        // We might still want an else for local component state if needed.
-
-      } else if (currentOverlayId === null) {
-         // Optional: Handle case where route parameter is null explicitly if needed
-         // For now, setCurrentOverlay(null) covers this implicitly if find returns null
+      } else {
+         this.overlayService.setCurrentOverlay(null);
+         this.currentOverlay = null;
+         this.apiService.fetchOverlays();
       }
     });
 
+    // Effect 2: Update iframe source based on current layout
     effect((): void => {
-      // Update the iframe source with the layout source URL
-      // Note: overlayService.currentLayout() is already a signal
       const layout: LayoutModel | null = this.overlayService.currentLayout();
       if (this.viewElement && layout) {
         this.viewElement.nativeElement.src = layout.source;
       }
     });
+  }
 
-    effect((): void => {
-      const overlayId: string | null = this.overlayId();
-
-      if (overlayId !== null) {
-        this.apiService.fetchOverlays();
-      }
-    });
+  ngAfterViewInit(): void {
+    // Set the initial src once the view is ready
+    const initialLayout: LayoutModel | null = this.overlayService.currentLayout();
+    if (this.viewElement && initialLayout) {
+      this.viewElement.nativeElement.src = initialLayout.source;
+    }
   }
 }
