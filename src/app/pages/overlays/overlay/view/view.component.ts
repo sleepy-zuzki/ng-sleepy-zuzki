@@ -86,15 +86,15 @@ export class ViewComponent implements AfterViewInit {
      * Efecto que reacciona a cambios en el layout actual seleccionado en OverlayService.
      * Actualiza el atributo 'src' del iframe para mostrar el nuevo layout.
      */
-    effect((): void => {
-      const layout: LayoutModel | null = this.overlayService.currentLayout();
-      if (this.viewElement && layout) {
-        this.viewElement.nativeElement.src = layout.source;
-      } else if (this.viewElement) {
-        // Limpiar el src si no hay layout
-        this.viewElement.nativeElement.src = '';
+    effect(() => {
+      const layout = this.overlayService.currentLayout();
+      const element = this.viewElement?.nativeElement;
+
+      if (element) {
+        element.src = layout ? layout.source : 'about:blank';
       }
     });
+
   }
 
   /**
@@ -106,6 +106,9 @@ export class ViewComponent implements AfterViewInit {
     const initialLayout: LayoutModel | null = this.overlayService.currentLayout();
     if (this.viewElement && initialLayout) {
       this.viewElement.nativeElement.src = initialLayout.source;
+    } else if (this.viewElement) {
+        // Asegurar que el src inicial también se limpie correctamente
+        this.viewElement.nativeElement.src = 'about:blank';
     }
   }
 }
