@@ -24,17 +24,17 @@ export class OverlayService {
   }
 
   // Método para actualizar el overlay actual
-  setCurrentOverlay(overlay: Overlay) {
+  setCurrentOverlay(overlay: Overlay | null) {
     this.currentOverlaySignal.set(overlay);
 
-    if (overlay.layouts !== 'string' && Array.isArray(overlay.layouts)) {
+    if (overlay && overlay.layouts !== 'string' && Array.isArray(overlay.layouts)) {
       this.setOverlayLayouts(overlay.layouts);
     } else {
       this.setOverlayLayouts([]);
     }
   }
 
-  setCurrentLayout (layout: LayoutModel) {
+  setCurrentLayout (layout: LayoutModel | null) {
     this.currentLayoutSignal.set(layout);
   }
 

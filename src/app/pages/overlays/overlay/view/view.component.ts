@@ -32,26 +32,35 @@ export class ViewComponent {
     );
 
     effect((): void => {
-      const currentOverlayId: string | null = this.overlayId(); // Read the signal here
-      const availableOverlays: Overlay[] = this.overlays(); // Read the signal here
+      const currentOverlayId: string | null = this.overlayId();
+      const availableOverlays: Overlay[] = this.overlays();
 
       if (availableOverlays && availableOverlays.length > 0 && currentOverlayId !== null) {
-        // Find the overlay using the reactive overlayId signal
         this.currentOverlay = availableOverlays.find(
           (overlay: Overlay) => overlay.id === currentOverlayId
         ) ?? null;
 
-        if (this.currentOverlay) {
-          // Actualizar el servicio con el overlay actual
-          this.overlayService.setCurrentOverlay(this.currentOverlay);
+        // Set the overlay in the service (this handles setting layouts too)
+        this.overlayService.setCurrentOverlay(this.currentOverlay);
 
-          // Get the first layout from the overlay's layouts
-          const layouts: LayoutModel[] = this.currentOverlay.layouts as LayoutModel[];
-          if (Array.isArray(layouts) && layouts.length > 0) {
-            this.overlayService.setOverlayLayouts(layouts);
+        if (this.currentOverlay) {
+          // Get layouts *from the service* after setting the overlay
+          const layouts = this.overlayService.overlayLayouts();
+          if (layouts.length > 0) {
+             // Set the first layout as the current one initially
             this.overlayService.setCurrentLayout(layouts[0]);
+          } else {
+            // Ensure currentLayout is null if no layouts exist for this overlay
+            this.overlayService.setCurrentLayout(null);
           }
         }
+        // No 'else' needed here for setting service state,
+        // because setCurrentOverlay(null) handles clearing layouts.
+        // We might still want an else for local component state if needed.
+
+      } else if (currentOverlayId === null) {
+         // Optional: Handle case where route parameter is null explicitly if needed
+         // For now, setCurrentOverlay(null) covers this implicitly if find returns null
       }
     });
 
