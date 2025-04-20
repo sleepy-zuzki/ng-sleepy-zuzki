@@ -8,6 +8,13 @@ import { Datum } from '@core/interfaces/strapi-response.interface';
   styleUrl: './project.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
+/**
+ * Componente para mostrar la tarjeta de un proyecto individual.
+ */
 export class ProjectComponent {
+  /**
+   * Datos del proyecto a mostrar.
+   * Se recibe como una señal de entrada (InputSignal).
+   */
   readonly project: InputSignal<Datum | undefined> = input<Datum>();
 }

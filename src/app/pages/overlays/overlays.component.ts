@@ -7,6 +7,10 @@ import { OverlayService } from '@services/overlay.service';
 import { LoadState } from '@core/enums/load-state.enum';
 import { ErrorMessage } from '@core/interfaces/error-message.interface';
 
+/**
+ * Página principal para mostrar la lista de overlays disponibles.
+ * Gestiona la carga inicial de datos y muestra estados de carga o error.
+ */
 @Component({
   selector: 'app-overlays',
   imports: [
@@ -18,37 +22,49 @@ import { ErrorMessage } from '@core/interfaces/error-message.interface';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class OverlaysComponent implements OnInit {
-  // Señales obtenidas del servicio
+  /** Señal con la lista de overlays obtenidos del servicio. */
   overlays: Signal<Overlay[]>;
+  /** Señal con el estado actual de la carga de overlays. */
   loadState: Signal<LoadState>;
+  /** Señal con la información del error, si ocurrió durante la carga. */
   errorInfo: Signal<ErrorMessage | null>;
 
-  // Valores constantes para el enum LoadState, accesibles desde el template
+  /** Exporta el enum LoadState para usarlo en el template. */
   readonly LOAD_STATE = LoadState;
 
+  /**
+   * @param githubDataApi Servicio para obtener los datos de overlays.
+   * @param overlayService Servicio para gestionar el estado del overlay seleccionado.
+   */
   constructor(
     private githubDataApi: GithubDataApiService,
     private overlayService: OverlayService
   ) {
+    // Vincula las señales locales a las señales expuestas por el servicio
     this.overlays = this.githubDataApi.overlays;
     this.loadState = this.githubDataApi.overlaysState;
     this.errorInfo = this.githubDataApi.overlaysError;
   }
 
+  /**
+   * Hook del ciclo de vida que se ejecuta al inicializar el componente.
+   * Inicia la carga de overlays y resetea el overlay actual en el servicio.
+   */
   ngOnInit(): void {
     this.loadOverlays();
-    this.overlayService.setCurrentOverlay(new Overlay());
+    // Resetea el overlay actual al entrar en la página de listado
+    this.overlayService.setCurrentOverlay(null);
   }
 
   /**
-   * Carga los overlays usando el servicio de datos
+   * Solicita la carga de los overlays a través del servicio de datos.
    */
   loadOverlays(): void {
     this.githubDataApi.fetchOverlays();
   }
 
   /**
-   * Reintentar la carga cuando hay errores
+   * Permite reintentar la carga de overlays en caso de error.
    */
   retry(): void {
     this.loadOverlays();

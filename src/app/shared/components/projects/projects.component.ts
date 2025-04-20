@@ -12,4 +12,7 @@ import { SkeletonComponent } from '@components/projects/project/skeleton/skeleto
   styleUrl: './projects.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
+/**
+ * Componente contenedor para mostrar la lista de proyectos.
+ */
 export class ProjectsComponent { }

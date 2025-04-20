@@ -3,6 +3,10 @@ import { Creator } from '@core/models/creator.model';
 import { LayoutModel } from '@core/models/layout.model';
 import { OverlayStatus } from '@core/enums/overlays.enum';
 
+/**
+ * Modelo que representa un overlay.
+ * Implementa la interfaz IOverlay.
+ */
 export class Overlay implements IOverlay {
   #id: string;
   #name: string;
@@ -13,10 +17,16 @@ export class Overlay implements IOverlay {
   #technologies: string;
   #layouts: string | LayoutModel[];
 
+  /**
+   * Crea una instancia de Overlay.
+   * @param data Objeto opcional con datos parciales iniciales que cumplen la interfaz IOverlay.
+   * @param availableCreators Array opcional de creadores disponibles para buscar por ID.
+   * @param availableLayouts Array opcional de layouts disponibles para buscar por ID.
+   */
   constructor(data?: Partial<IOverlay>, availableCreators?: Creator[], availableLayouts?: LayoutModel[]) {
     this.#id = data?.id ?? '';
     this.#name = data?.name ?? '';
-    this.#status = data?.status as OverlayStatus ?? OverlayStatus.BORRADOR;
+    this.#status = data?.status ?? OverlayStatus.BORRADOR;
     this.#preview = data?.preview ?? '';
 
     // Procesar owner
@@ -37,82 +47,106 @@ export class Overlay implements IOverlay {
 
     // Procesar layouts
     if (typeof data?.layouts === 'string' && availableLayouts?.length) {
+      // Si layouts es un string de IDs separados por coma
       this.#layouts = data.layouts
-      .split(',')
-      .filter(id => id !== '')
-      .map(id => availableLayouts.find(layout => layout.id === id))
-      .filter((layout): layout is LayoutModel => layout !== undefined);
+        .split(',')
+        .map(id => id.trim()) // Limpiar espacios
+        .filter(id => id !== '') // Filtrar IDs vacíos
+        .map(id => availableLayouts.find(layout => layout.id === id)) // Buscar layout por ID
+        .filter((layout): layout is LayoutModel => layout !== undefined); // Filtrar no encontrados
     } else if (Array.isArray(data?.layouts)) {
+      // Si layouts ya es un array de LayoutModel
       this.#layouts = data.layouts;
     } else {
-      this.#layouts = '';
+      // Valor por defecto si no es string ni array
+      this.#layouts = []; // Cambiado a array vacío en lugar de string vacío
     }
   }
 
+  /** Obtiene el ID del overlay. */
   get id(): string {
     return this.#id;
   }
 
+  /** Establece el ID del overlay. */
   set id(value: string) {
     this.#id = value;
   }
 
+  /** Obtiene el nombre del overlay. */
   get name(): string {
     return this.#name;
   }
 
+  /** Establece el nombre del overlay. */
   set name(value: string) {
     this.#name = value;
   }
 
+  /** Obtiene el estado del overlay. */
   get status(): OverlayStatus {
     return this.#status;
   }
 
+  /** Establece el estado del overlay. */
   set status(value: OverlayStatus) {
     this.#status = value;
   }
 
+  /** Obtiene la URL de la vista previa. */
   get preview(): string {
     return this.#preview;
   }
 
+  /** Establece la URL de la vista previa. */
   set preview(value: string) {
     this.#preview = value;
   }
 
+  /** Obtiene el propietario (ID o Creator). */
   get owner(): string | Creator {
     return this.#owner;
   }
 
+  /** Establece el propietario. */
   set owner(value: string | Creator) {
     this.#owner = value;
   }
 
+  /** Obtiene el creador (ID o Creator). */
   get creator(): string | Creator {
     return this.#creator;
   }
 
+  /** Establece el creador. */
   set creator(value: string | Creator) {
     this.#creator = value;
   }
 
+  /** Obtiene las tecnologías (string). */
   get technologies(): string {
     return this.#technologies;
   }
 
+  /** Establece las tecnologías. */
   set technologies(value: string) {
     this.#technologies = value;
   }
 
+  /** Obtiene los layouts asociados (array de LayoutModel o string vacío si no hay). */
   get layouts(): string | LayoutModel[] {
     return this.#layouts;
   }
 
+  /** Establece los layouts asociados. */
   set layouts(value: string | LayoutModel[]) {
     this.#layouts = value;
   }
 
+  /**
+   * Convierte el modelo Overlay a un objeto JSON que cumple la interfaz IOverlay.
+   * @returns Objeto IOverlay.
+   */
   toJson(): IOverlay {
     return {
       id: this.#id,
