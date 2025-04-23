@@ -1,37 +1,19 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, input, InputSignal, OnInit, ViewChild } from '@angular/core';
-import { ProjectsComponent } from '@components/projects/projects.component';
-import { SocialsComponent } from '@components/socials/socials.component';
-import { OverlayService } from '@services/overlay.service';
-import { Overlay } from '@core/models/overlay.model';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { LandingFeatureComponent } from '@features/landing/landing.feature';
 
 @Component({
   selector: 'app-landing',
+  standalone: true,
   imports: [
-    ProjectsComponent,
-    SocialsComponent
+    LandingFeatureComponent
   ],
-  templateUrl: './landing.component.html',
-  styleUrl: './landing.component.css',
+  template: `<app-landing-feature/>`,
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 /**
  * Componente que representa la página de inicio (Landing Page) de la aplicación.
- * Muestra componentes como Proyectos y Redes Sociales.
+ * Actúa como contenedor de layout para la característica de landing.
  */
-export class LandingComponent implements OnInit {
-
-  /**
-   * @param overlayService Servicio para gestionar el estado del overlay seleccionado.
-   */
-  constructor(private overlayService: OverlayService) { }
-
-  /**
-   * Hook del ciclo de vida que se ejecuta al inicializar el componente.
-   * Resetea el overlay actual en el servicio al cargar la página de inicio.
-   */
-  ngOnInit(): void {
-    // Asegura que no haya ningún overlay seleccionado al mostrar la landing page
-    this.overlayService.setCurrentOverlay(null);
-  }
-
+export class LandingComponent {
+  // Logic moved to LandingFeatureComponent
 }

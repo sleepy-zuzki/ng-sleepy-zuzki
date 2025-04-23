@@ -1,11 +1,12 @@
-<section id='avatar' slot='main-header' class='avatar_container items-center'>
+<section class='avatar_container items-center' id='avatar' slot='main-header'>
   <wa-avatar
     class='avatar'
     image='https://assets.zuzki.dev/zuzki_christmas_optimized_2123ccfe72.webp'
-    label='Zuzki'>
+    label='Zuzki'
+    loading="lazy">
   </wa-avatar>
 
-  <section id='about' class='about_container'>
+  <section class='about_container' id='about'>
     <p>Soy un desarrollador apasionado por la creación de aplicaciones web innovadoras y funcionales.</p>
     <p>Siempre busco nuevas formas de mejorar mis habilidades y actualmente estoy explorando el emocionante mundo
       del diseño de interfaces para las transmisiones en vivo.</p>
@@ -15,6 +16,6 @@
 </section>
 
 <section class="wa-body-l text-center">
-  <app-projects id='projects' class='projects_container'/>
+  <app-projects class='projects_container' id='projects'/>
   <app-socials id="socials"/>
 </section>
