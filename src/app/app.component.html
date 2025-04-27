@@ -1,44 +1,51 @@
-<wa-page>
-  <section slot="header" id='navbar' class="wa-body-s wa-split shadow-sm w-full flex justify-start xs:flex-col flex-col md:flex-row">
-    <div class="container mx-auto flex justify-between items-center xs:flex-col md:flex-row">
-      <a routerLink='/' routerLinkActive="active" ariaCurrentWhenActive="page" class='wa-split-item w-[189px]'>
-        <wa-icon family='duotone' name="code" class="text-4xl align-middle" aria-hidden="true" role="img" aria-label="Código"></wa-icon>
-        <h1 id="brand-name" class="wa-heading-s wa-desktop-only inline-block align-middle text-2xl font-bold">
-          Sleepy Zuzki
-        </h1>
-      </a>
+<header class="border-b border-sleepy-light-border dark:border-sleepy-dark-border">
+  <nav class="container mx-auto flex items-center justify-between h-16 px-4" id='navbar' role="navigation">
+    <app-link class="logo flex items-center text-xl font-medium select-none" href="/" routerLinkActiveClass="" variant="nav">
+      <fa-icon [icon]="faCode" class="mr-2 text-sleepy-accent"></fa-icon>
+      Sleepy Zuzki
+    </app-link>
 
-      <div class="links flex flex-col items-center lg:flex-row">
-        <a class='link_container' routerLink='/overlays' routerLinkActive="active" ariaCurrentWhenActive="page">
-          <span class='link'>Overlays</span>
-        </a>
-      </div>
+    <div class="flex items-center gap-8">
+      <ul class="hidden md:flex items-center gap-8">
+        <li><app-link routerLink="/about" variant="nav">About Me</app-link></li>
+        <li><app-link routerLink="/projects" variant="nav">Projects</app-link></li>
+        <li><app-link routerLink="/contact" variant="nav">Contact</app-link></li>
+      </ul>
 
-      <div class="drawer">
-        @if (overlayService.overlayLayouts().length > 0) {
-          <wa-drawer #drawer label="Vistas" with-header with-footer class="drawer-overview">
-            <main>
-              @for (layout of overlayService.overlayLayouts(); track layout.id) {
-                <wa-card (click)="changeLayout(layout.id)" with-image class="card-body" title="{{ layout.name }}: Haz clic para seleccionar esta vista">
-                  <img src="{{ layout.preview }}" height="100" slot="image" alt="Placeholder"/>
-                  <p><b>{{ layout.name }}</b></p>
-                </wa-card>
-              }
-            </main>
-
-            <wa-button slot="footer" variant="brand" data-drawer="close">Cerrar</wa-button>
-          </wa-drawer>
-
-          <wa-button (click)="openDrawer()" aria-label="Ver layouts disponibles" title="Ver layouts">
-            <wa-icon family="classic" name="bars" variant="regular"></wa-icon>
-            <span class="sr-only">Ver layouts</span>
-          </wa-button>
-        }
+      <div class="flex items-center gap-3">
+        <app-theme-toggle></app-theme-toggle>
+        <app-button ariaLabel="Cambiar idioma" variant="secondary">
+          🌐
+        </app-button>
+        <app-button ariaLabel="Menú móvil" class="md:hidden" variant="secondary">
+          ☰
+        </app-button>
       </div>
     </div>
-  </section>
+  </nav>
+</header>
 
-  <main class="h-full p-0">
-    <router-outlet/>
-  </main>
-</wa-page>
+<main class="container mx-auto min-h-screen p-4">
+  <router-outlet/>
+</main>
+
+<footer class="mt-12 border-t py-8 border-sleepy-light-border dark:border-sleepy-dark-border bg-sleepy-light-bg-surface dark:bg-sleepy-dark-bg-surface">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col md:flex-row justify-between items-center">
+      <p class="text-sleepy-light-text-secondary dark:text-sleepy-dark-text-secondary">
+        © 2025 Sleepy Zuzki. Todos los derechos reservados.
+      </p>
+      <div class="flex gap-4 mt-4 md:mt-0">
+        <a class="text-sleepy-light-text-secondary dark:text-sleepy-dark-text-secondary hover:text-sleepy-accent select-none" href="#">
+          Github
+        </a>
+        <a class="text-sleepy-light-text-secondary dark:text-sleepy-dark-text-secondary hover:text-sleepy-accent select-none" href="#">
+          LinkedIn
+        </a>
+        <a class="text-sleepy-light-text-secondary dark:text-sleepy-dark-text-secondary hover:text-sleepy-accent select-none" href="#">
+          Twitter
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>

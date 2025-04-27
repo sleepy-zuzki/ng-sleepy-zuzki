@@ -1,25 +1,28 @@
 import {
   Component,
-  CUSTOM_ELEMENTS_SCHEMA, effect,
   ElementRef,
   Signal,
   ViewChild
 } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { Overlay } from '@core/models/overlay.model';
 import { GithubDataApiService } from '@services/github-data-api.service';
 import { LayoutModel } from '@core/models/layout.model';
 import { OverlayService } from '@services/overlay.service';
+import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawesome';
+import { faCode } from '@awesome.me/kit-15d5a6a4b5/icons/duotone/solid';
+import { ButtonComponent } from '@components/ui/button/button.component';
+import { LinkComponent } from '@components/ui/link/link.component';
+import { ThemeToggleComponent } from '@components/ui/button/theme-toggle.component';
 
 /**
  * Componente raíz de la aplicación.
  */
 @Component({
   selector: 'app-root',
-    imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, FontAwesomeModule, ButtonComponent, LinkComponent, ThemeToggleComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  styleUrl: './app.component.css'
 })
 export class AppComponent {
   /** Referencia al elemento del cajón lateral (drawer). */
@@ -28,6 +31,7 @@ export class AppComponent {
   title: string = 'Sleepy Zuzki';
   /** Señal que contiene la lista de overlays disponibles. */
   readonly overlays: Signal<Overlay[]>;
+  readonly faCode: IconDefinition = faCode;
 
   /**
    * @param apiService Servicio para interactuar con la API de datos de GitHub.
