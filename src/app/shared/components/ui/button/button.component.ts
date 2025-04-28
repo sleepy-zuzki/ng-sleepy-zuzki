@@ -15,7 +15,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   `,
   styles: [`
     .btn-primary {
-      @apply rounded-md font-medium transition-colors px-4 py-2 select-none;
+      @apply rounded-md font-medium transition-colors px-4 py-2 select-none w-full;
       /* Colores primarios */
       @apply bg-sleepy-accent text-sleepy-light-text-onAccent;
       @apply hover:bg-sleepy-accent-hover disabled:opacity-70;
@@ -23,7 +23,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
     }
 
     .btn-secondary {
-      @apply rounded-md font-medium transition-colors px-4 py-2 select-none;
+      @apply rounded-md font-medium transition-colors px-4 py-2 select-none w-full;
       /* Colores secundarios */
       @apply bg-sleepy-light-bg-surface text-sleepy-light-text-secondary;
       @apply hover:bg-sleepy-light-border disabled:opacity-70;

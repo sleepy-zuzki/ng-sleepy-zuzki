@@ -1,14 +1,12 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { ProjectsComponent } from '@components/projects/projects.component';
-import { SocialsComponent } from '@components/socials/socials.component';
 import { OverlayService } from '@services/overlay.service';
-import { ControlsGridComponent } from '@components/ui/controls-grid.component';
+import { ButtonComponent } from '@components/ui/button/button.component';
 
 @Component({
   selector: 'app-home-feature',
   standalone: true,
   imports: [
-    ControlsGridComponent
+    ButtonComponent
   ],
   templateUrl: './home.feature.html',
   styleUrl: './home.feature.css',
