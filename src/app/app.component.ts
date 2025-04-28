@@ -11,16 +11,15 @@ import { LayoutModel } from '@core/models/layout.model';
 import { OverlayService } from '@services/overlay.service';
 import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawesome';
 import { faCode } from '@awesome.me/kit-15d5a6a4b5/icons/duotone/solid';
-import { ButtonComponent } from '@components/ui/button/button.component';
-import { LinkComponent } from '@components/ui/link/link.component';
-import { ThemeToggleComponent } from '@components/ui/button/theme-toggle.component';
+import { HeaderComponent } from '@components/header/header.component';
+import { FooterComponent } from '@components/footer/footer.component';
 
 /**
  * Componente raíz de la aplicación.
  */
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, FontAwesomeModule, ButtonComponent, LinkComponent, ThemeToggleComponent],
+  imports: [RouterOutlet, FontAwesomeModule, HeaderComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

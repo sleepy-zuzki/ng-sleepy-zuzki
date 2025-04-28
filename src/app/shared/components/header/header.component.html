@@ -1,0 +1,26 @@
+<header class="border-b border-sleepy-light-border dark:border-sleepy-dark-border">
+  <nav class="container mx-auto flex items-center justify-between h-16 px-4" id='navbar' role="navigation">
+    <app-link class="logo flex items-center text-xl font-medium select-none" href="/" routerLinkActiveClass="" variant="nav">
+      <fa-icon [icon]="faCode" class="mr-2 text-sleepy-accent"></fa-icon>
+      Sleepy Zuzki
+    </app-link>
+
+    <div class="flex items-center gap-8">
+      <ul class="hidden md:flex items-center gap-8">
+        <li><app-link routerLink="/about" variant="nav">About Me</app-link></li>
+        <li><app-link routerLink="/projects" variant="nav">Projects</app-link></li>
+        <li><app-link routerLink="/contact" variant="nav">Contact</app-link></li>
+      </ul>
+
+      <div class="flex items-center gap-3">
+        <app-theme-toggle></app-theme-toggle>
+        <app-button ariaLabel="Cambiar idioma" variant="secondary">
+          🌐
+        </app-button>
+        <app-button ariaLabel="Menú móvil" class="md:hidden" variant="secondary">
+          ☰
+        </app-button>
+      </div>
+    </div>
+  </nav>
+</header>
