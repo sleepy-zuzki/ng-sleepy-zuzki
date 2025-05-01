@@ -1,6 +1,10 @@
 <section class="flex flex-col gap-10" id="landing">
   <section class="flex gap-10" id="introduction">
-    <img alt="Profile Picture" height="280" ngSrc="/images/working.webp" style="width: 460px; height: 280px;" width="460"/>
+    <img alt="Profile Picture"
+         class="w-[460px] h-[280px]"
+         height="280"
+         ngSrc="/images/working.webp"
+         width="460"/>
 
     <div class="flex flex-row flex-wrap gap-5">
       <div class="w-full text-5xl">
@@ -19,14 +23,14 @@
     </div>
   </section>
 
-  <section id="about_me">
+  <section id="about-me">
     <h2 class="text-[1.75rem]">Sobre mí</h2>
     <p>Soy Zuzki, Ingeniero de Software con pasión por crear experiencias accesibles y visualmente atractivas.</p>
     <p>Además, cuento con una sólida base en arquitecturas escalables, lo que me permite abordar cada proyecto con precisión y creatividad.</p>
     <p>Siempre estoy explorando nuevas tecnologías para perfeccionar mi trabajo y ofrecer soluciones funcionales y memorables.</p>
   </section>
 
-  <section id="tecnologies">
+  <section id="technologies">
     <h2 class="text-[1.75rem]">Tecnologies</h2>
 
     <app-badge [badges]="technologies"></app-badge>
@@ -46,12 +50,14 @@
   <section id="contact">
     <h2 class="text-[1.75rem]">Contact</h2>
 
-    <p>I'm excited to hear about potential collaborations! Feel free to reach out through the channels below.</p>
+    <p class="mb-3">¡Estoy emocionado por escuchar sobre posibles colaboraciones!</p>
 
-    <div class="flex flex-col gap-2 w-1/2">
-      <app-input label="Nombre" placeholder="Tu nombre"></app-input>
-      <app-textarea [rows]="5" label="Mensaje" placeholder="Escribe tu mensaje aquí"></app-textarea>
-      <app-button class="w-1/3">Enviar Mensaje</app-button>
-    </div>
+    <form action="">
+      <div class="flex flex-col gap-2 w-1/2">
+        <app-input label="Nombre" placeholder="Tu nombre"></app-input>
+        <app-textarea [rows]="5" label="Mensaje" placeholder="Escribe tu mensaje aquí"></app-textarea>
+        <app-button class="w-1/3">Enviar Mensaje</app-button>
+      </div>
+    </form>
   </section>
 </section>
