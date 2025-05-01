@@ -1,8 +1,8 @@
 <header class="border-b border-sleepy-light-border dark:border-sleepy-dark-border">
   <nav class="container mx-auto flex items-center justify-between h-16 px-4" id='navbar' role="navigation">
-    <app-link class="logo flex items-center text-xl font-medium select-none" href="/" routerLinkActiveClass="" variant="nav">
-      <fa-icon [icon]="faCode" class="mr-2 text-sleepy-accent"></fa-icon>
-      Sleepy Zuzki
+    <app-link class="logo flex items-center text-xl font-medium select-none" routerLink="/" routerLinkActiveClass="" variant="nav">
+      <fa-icon [icon]="faCode" class="mr-2 text-sleepy-accent" size="2xl"></fa-icon>
+      <span class="text-2xl font-bold">Sleepy Zuzki</span>
     </app-link>
 
     <div class="flex items-center gap-8">
@@ -14,12 +14,12 @@
 
       <div class="flex items-center gap-3">
         <app-theme-toggle></app-theme-toggle>
-<!--        <app-button ariaLabel="Cambiar idioma" variant="secondary">-->
-<!--          🌐-->
-<!--        </app-button>-->
-<!--        <app-button ariaLabel="Menú móvil" class="md:hidden" variant="secondary">-->
-<!--          ☰-->
-<!--        </app-button>-->
+        <app-button ariaLabel="Cambiar idioma" variant="secondary">
+          🌐
+        </app-button>
+        <app-button ariaLabel="Menú móvil" class="md:hidden" variant="secondary">
+          ☰
+        </app-button>
       </div>
     </div>
   </nav>

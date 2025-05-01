@@ -53,6 +53,11 @@ module.exports = {
           }
         }
       },
+      fontFamily: {
+        sans: ['Inter', 'IBM Plex Sans', 'sans-serif'],
+        heading: ['Space Grotesk', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
     },
   },
   variants: {

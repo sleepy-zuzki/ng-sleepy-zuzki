@@ -13,6 +13,12 @@ import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawes
 import { faCode } from '@awesome.me/kit-15d5a6a4b5/icons/duotone/solid';
 import { HeaderComponent } from '@components/header/header.component';
 import { FooterComponent } from '@components/footer/footer.component';
+import { IMAGE_CONFIG, ImageConfig } from '@angular/common';
+
+const customImageConfig: ImageConfig = {
+  breakpoints: [480, 960, 1280, 1920],
+  disableImageSizeWarning: false
+}
 
 /**
  * Componente raíz de la aplicación.
@@ -20,6 +26,9 @@ import { FooterComponent } from '@components/footer/footer.component';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, FontAwesomeModule, HeaderComponent, FooterComponent],
+  providers: [
+    {provide: IMAGE_CONFIG, useValue: customImageConfig}
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
