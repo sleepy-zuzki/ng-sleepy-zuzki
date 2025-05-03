@@ -18,7 +18,7 @@ export interface Project {
   /** Descripción breve del proyecto */
   description: string;
   /** URL opcional para navegar al detalle del proyecto */
-  projectUrl?: string;
+  projectUrl?: string | any[] | null;
 }
 
 /**
@@ -44,7 +44,7 @@ export interface Project {
           <p class="w-full">{{ project.year }}</p>
           <p>{{ project.description }}</p>
         </div>
-        <app-button class="self-start" [routerLink]="project.projectUrl">
+        <app-button class="self-start" >
           {{ buttonText }}
         </app-button>
       </div>
