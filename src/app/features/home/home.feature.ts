@@ -1,9 +1,9 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { OverlayService } from '@services/overlay.service';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, HostListener } from '@angular/core';
 import { TextareaComponent, InputComponent, ButtonComponent, ProjectCardComponent } from '@components/ui';
 import { BadgeComponent } from '@components/ui/badge/badge.component';
-import { Project } from '@components/ui/project-card/project-card.component';
 import { NgOptimizedImage } from '@angular/common';
+import { GithubDataApiService } from '@services/github-data-api.service';
+import { Overlay } from '@core/models/overlay.model';
 
 @Component({
   selector: 'app-home-feature',
@@ -24,47 +24,21 @@ import { NgOptimizedImage } from '@angular/common';
  * Componente que representa la característica de la página de inicio (Home Page) de la aplicación.
  * Muestra componentes como Proyectos y Redes Sociales.
  */
-export class HomeFeatureComponent implements OnInit {
+export class HomeFeatureComponent {
   technologies: string[] = ['Javascript', 'React', 'Node.js', 'Express', 'HTML5', 'CSS3', 'MongoDB', 'PostgreSQL', 'Git', 'AWS', 'Docker', 'Webpack'];
+  projects: Overlay[] = [];
+  windowWidth: number = 0;
 
-  /**
-   * Lista de proyectos a mostrar en la sección de proyectos
-   */
-  projects: Project[] = [
-    {
-      id: 'project1',
-      imageUrl: 'https://placehold.co/460x280',
-      title: 'Proyecto 1',
-      year: 2023,
-      description: 'Una plataforma para gestionar tareas y colaborar con miembros del equipo eficazmente.'
-    },
-    {
-      id: 'project2',
-      imageUrl: 'https://placehold.co/460x280',
-      title: 'Proyecto 2',
-      year: 2023,
-      description: 'Una plataforma para gestionar tareas y colaborar con miembros del equipo eficazmente.'
-    },
-    {
-      id: 'project3',
-      imageUrl: 'https://placehold.co/460x280',
-      title: 'Proyecto 3',
-      year: 2023,
-      description: 'Una plataforma para gestionar tareas y colaborar con miembros del equipo eficazmente.'
-    }
-  ];
+  constructor(private apiService: GithubDataApiService) {
+    this.apiService.fetchOverlays();
+    this.windowWidth = window.innerWidth;
+    effect(() => {
+      this.projects = this.apiService.overlays();
+    });
+  }
 
-  /**
-   * @param overlayService Servicio para gestionar el estado del overlay seleccionado.
-   */
-  constructor(private overlayService: OverlayService) { }
-
-  /**
-   * Hook del ciclo de vida que se ejecuta al inicializar el componente.
-   * Resetea el overlay actual en el servicio al cargar la página de inicio.
-   */
-  ngOnInit(): void {
-    // Asegura que no haya ningún overlay seleccionado al mostrar la página de inicio
-    this.overlayService.setCurrentOverlay(null);
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.windowWidth = window.innerWidth;
   }
 }

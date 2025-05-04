@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, effect, HostListener } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { Project, ProjectCardComponent } from '@components/ui';
+import { ProjectCardComponent } from '@components/ui';
+import { Overlay } from '@core/models/overlay.model';
+import { GithubDataApiService } from '@services/github-data-api.service';
 
 @Component({
   selector: 'app-about-feature',
@@ -12,13 +14,20 @@ import { Project, ProjectCardComponent } from '@components/ui';
   styleUrl: './about.feature.css'
 })
 export class AboutFeatureComponent {
-  projects: Project[] = [
-    {
-      id: 'project1',
-      imageUrl: 'https://placehold.co/460x280',
-      title: 'Proyecto 1',
-      year: 2023,
-      description: 'Una plataforma para gestionar tareas y colaborar con miembros del equipo eficazmente.'
-    }
-  ];
+  projects: Overlay[] = [];
+  windowWidth: number = 0;
+
+  constructor (
+    private apiService: GithubDataApiService
+  ) {
+    this.apiService.fetchOverlays();
+    effect(() => {
+      this.projects = this.apiService.overlays();
+    });
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.windowWidth = window.innerWidth;
+  }
 }

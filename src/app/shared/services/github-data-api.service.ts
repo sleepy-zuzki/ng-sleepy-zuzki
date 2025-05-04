@@ -32,12 +32,14 @@ export class GithubDataApiService {
   socials: Signal<Social[]>;
   layouts: Signal<LayoutModel[]>;
   technologies: Signal<TechnologyModel[]>;
+
   // Signals públicas para estados de carga
   overlaysState: Signal<LoadState>;
   creatorsState: Signal<LoadState>;
   socialsState: Signal<LoadState>;
   layoutsState: Signal<LoadState>;
   technologiesState: Signal<LoadState>;
+
   // Signals públicas para errores
   overlaysError: Signal<ErrorMessage | null>;
   creatorsError: Signal<ErrorMessage | null>;
@@ -97,9 +99,16 @@ export class GithubDataApiService {
   /**
    * Obtiene los overlays con toda su información relacionada
    * Realiza una carga en cascada si es necesario (primero creadores, luego layouts)
+   * Evita iniciar una nueva carga si los datos ya están cargados o en proceso de carga.
    * @param params Parámetros HTTP opcionales
    */
   fetchOverlays(params?: HttpParams): void {
+    const currentState: LoadState = this.#overlaysStateSubject.getValue();
+
+    if (currentState === LoadState.LOADED || currentState === LoadState.LOADING) {
+      return;
+    }
+
     this.#overlaysStateSubject.next(LoadState.LOADING);
     this.#overlaysErrorSubject.next(null);
 
@@ -111,6 +120,8 @@ export class GithubDataApiService {
         .pipe(
           switchMap(() => this.fetchOverlaysWithLayouts(params, true)),
           finalize(() => {
+            // Asegurarse de que solo se actualiza a LOADED si aún estaba LOADING
+            // (podría haber cambiado a ERROR mientras tanto)
             if (this.#overlaysStateSubject.getValue() === LoadState.LOADING) {
               this.#overlaysStateSubject.next(LoadState.LOADED);
             }
@@ -122,6 +133,7 @@ export class GithubDataApiService {
       this.fetchOverlaysWithLayouts(params, true)
         .pipe(
           finalize(() => {
+            // Asegurarse de que solo se actualiza a LOADED si aún estaba LOADING
             if (this.#overlaysStateSubject.getValue() === LoadState.LOADING) {
               this.#overlaysStateSubject.next(LoadState.LOADED);
             }
@@ -154,11 +166,17 @@ export class GithubDataApiService {
         )
       : this.loadOverlaysWithFullData(params);
 
-    return autoSubscribe ? observable : observable;
+    if (autoSubscribe) {
+      observable.subscribe();
+      return of(this.#overlaysSubject.getValue());
+    }
+
+    return observable;
   }
 
   /**
    * Obtiene las redes sociales
+   * Evita iniciar una nueva carga si los datos ya están cargados o en proceso de carga.
    * @param params Parámetros HTTP opcionales
    * @param autoSubscribe Si es true, autogestiona la suscripción
    * @returns Observable con las redes sociales obtenidas
@@ -167,6 +185,11 @@ export class GithubDataApiService {
     params?: HttpParams,
     autoSubscribe: boolean = true
   ): Observable<Social[]> {
+    const currentState = this.#socialsStateSubject.getValue();
+    if (currentState === LoadState.LOADED || currentState === LoadState.LOADING) {
+      return of(this.#socialsSubject.getValue());
+    }
+
     this.#socialsStateSubject.next(LoadState.LOADING);
     this.#socialsErrorSubject.next(null);
 
@@ -203,6 +226,7 @@ export class GithubDataApiService {
   /**
    * Obtiene los creadores con sus redes sociales
    * Realiza una carga en cascada si es necesario
+   * Evita iniciar una nueva carga si los datos ya están cargados o en proceso de carga.
    * @param params Parámetros HTTP opcionales
    * @param autoSubscribe Si es true, autogestiona la suscripción
    * @returns Observable con los creadores obtenidos
@@ -211,6 +235,11 @@ export class GithubDataApiService {
     params?: HttpParams,
     autoSubscribe: boolean = true
   ): Observable<Creator[]> {
+    const currentState: LoadState = this.#creatorsStateSubject.getValue();
+    if (currentState === LoadState.LOADED || currentState === LoadState.LOADING) {
+      return of(this.#creatorsSubject.getValue());
+    }
+
     this.#creatorsStateSubject.next(LoadState.LOADING);
     this.#creatorsErrorSubject.next(null);
 
@@ -240,6 +269,7 @@ export class GithubDataApiService {
 
   /**
    * Obtiene los layouts
+   * Evita iniciar una nueva carga si los datos ya están cargados o en proceso de carga.
    * @param params Parámetros HTTP opcionales
    * @param autoSubscribe Si es true, autogestiona la suscripción
    * @returns Observable con los layouts obtenidos
@@ -248,6 +278,11 @@ export class GithubDataApiService {
     params?: HttpParams,
     autoSubscribe: boolean = true
   ): Observable<LayoutModel[]> {
+    const currentState: LoadState = this.#layoutsStateSubject.getValue();
+    if (currentState === LoadState.LOADED || currentState === LoadState.LOADING) {
+      return of(this.#layoutsSubject.getValue());
+    }
+
     this.#layoutsStateSubject.next(LoadState.LOADING);
     this.#layoutsErrorSubject.next(null);
 
@@ -286,9 +321,15 @@ export class GithubDataApiService {
 
   /**
    * Obtiene las tecnologías
+   * Evita iniciar una nueva carga si los datos ya están cargados o en proceso de carga.
    * @param params Parámetros HTTP opcionales
    */
   fetchTechnologies(params?: HttpParams): void {
+    const currentState: LoadState = this.#technologiesStateSubject.getValue();
+    if (currentState === LoadState.LOADED || currentState === LoadState.LOADING) {
+      return;
+    }
+
     this.#technologiesStateSubject.next(LoadState.LOADING);
     this.#technologiesErrorSubject.next(null);
 
