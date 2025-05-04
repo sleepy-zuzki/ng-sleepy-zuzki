@@ -21,6 +21,7 @@ export class AboutFeatureComponent {
     private apiService: GithubDataApiService
   ) {
     this.apiService.fetchOverlays();
+    this.windowWidth = window.innerWidth;
     effect(() => {
       this.projects = this.apiService.overlays();
     });

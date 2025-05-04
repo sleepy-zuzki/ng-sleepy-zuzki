@@ -30,9 +30,21 @@
     />
   </section>
 
-  <section>
-    <h2 class="text-4xl mb-2">Proyectos</h2>
+  <section class="flex flex-col gap-2">
+    <h2 class="text-4xl mb-2">Trabajos</h2>
     @for (project of projects; track project.id) {
+      <app-project-card
+        class="w-full"
+        [project]="project"
+        [variant]="windowWidth < 426 ? 'square' : 'elongated'"
+        buttonText="Ver Proyecto">
+      </app-project-card>
+      <app-project-card
+        class="w-full"
+        [project]="project"
+        [variant]="windowWidth < 426 ? 'square' : 'elongated'"
+        buttonText="Ver Proyecto">
+      </app-project-card>
       <app-project-card
         class="w-full"
         [project]="project"
