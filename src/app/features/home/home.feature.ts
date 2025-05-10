@@ -1,13 +1,14 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, HostListener } from '@angular/core';
 import { TextareaComponent, InputComponent, ButtonComponent, ProjectCardComponent } from '@components/ui';
 import { BadgeComponent } from '@components/ui/badge/badge.component';
-import { NgOptimizedImage } from '@angular/common';
 import { GithubDataApiService } from '@services/github-data-api.service';
 import { Overlay } from '@core/models/overlay.model';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, NgForm } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, pipe, throwError } from 'rxjs';
+import { catchError, throwError } from 'rxjs';
 import { ResponsiveImgComponent } from '@components/ui/responsive-img/responsive-img.component';
+import { HotToastService } from '@ngxpert/hot-toast';
+import { ContactFormComponent } from '@components/forms/contact-form/contact-form.component';
 
 @Component({
   selector: 'app-home-feature',
@@ -18,9 +19,9 @@ import { ResponsiveImgComponent } from '@components/ui/responsive-img/responsive
     TextareaComponent,
     BadgeComponent,
     ProjectCardComponent,
-    NgOptimizedImage,
     FormsModule,
-    ResponsiveImgComponent
+    ResponsiveImgComponent,
+    ContactFormComponent
   ],
   templateUrl: './home.feature.html',
   styleUrl: './home.feature.css',
@@ -35,15 +36,12 @@ export class HomeFeatureComponent {
   projects: Overlay[] = [];
   windowWidth: number = 0;
 
-  formData = {
-    name: '',
-    email: '',
-    message: ''
-  }
+
 
   constructor(
     private apiService: GithubDataApiService,
-    private http: HttpClient
+    private http: HttpClient,
+    private toast: HotToastService
   ) {
     this.apiService.fetchOverlays();
     this.windowWidth = window.innerWidth;
@@ -57,12 +55,7 @@ export class HomeFeatureComponent {
     this.windowWidth = window.innerWidth;
   }
 
-  onSubmit(form: NgForm) {
-    if (form.invalid) {
-      console.error('Formulario Invalido');
-      return;
-    }
-
+  onSubmit(form: FormGroup) {
     const url = "https://hook.us2.make.com/zl0p2vv4190wklivjadktnec326qzqs6";
     const values = form.value;
 
@@ -81,13 +74,7 @@ export class HomeFeatureComponent {
     )
     .subscribe({
       next: data => {
-        form.reset();
-
-        this.formData = {
-          name: '',
-          email: '',
-          message: ''
-        };
+        this.toast.show('Tu mensaje ha sido enviado correctamente. Gracias por contactarnos.');
       },
       error: err => {
         // Aquí puedes manejar el error que fue relanzado o uno nuevo

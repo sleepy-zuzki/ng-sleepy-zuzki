@@ -13,11 +13,6 @@ export class ResponsiveImgComponent {
   @Input() widths: number[] = [320, 460, 768, 1280, 1920];
 
   get srcset(): string {
-    const sets = this.widths
-    .map(w => `${this.cdnBaseUrl}/${this.name}-${w}.webp ${w}w`)
-    .join(', ');
-    console.log(sets);
-
     return this.widths
     .map(w => `${this.cdnBaseUrl}/${this.name}-${w}.webp ${w}w`)
     .join(', ');
