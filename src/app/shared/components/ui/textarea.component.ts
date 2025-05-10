@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, EventEmitter, forwardRef, Input, Output } from '@angular/core';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-textarea',
@@ -53,9 +53,16 @@ import { FormsModule } from '@angular/forms';
       @apply text-xs text-sleepy-light-text-secondary mt-1;
       @apply dark:text-sleepy-dark-text-secondary;
     }
-  `]
+  `],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => TextareaComponent),
+      multi: true
+    }
+  ]
 })
-export class TextareaComponent {
+export class TextareaComponent implements ControlValueAccessor {
   @Input() placeholder: string = '';
   @Input() label: string = '';
   @Input() helperText: string = '';
@@ -63,8 +70,35 @@ export class TextareaComponent {
   @Input() rows: number = 4;
   @Input() value: string = '';
   @Input() onChange: (value: string) => void = () => {};
+  @Output() valueChange = new EventEmitter<string>();
 
   onValueChange(value: string): void {
     this.onChange(value);
+    this.valueChange.emit(value);
+    this.onChangeCallback(value);
   }
+
+  // Métodos de ControlValueAccessor
+  writeValue(value: any): void {
+    if (value !== undefined && value !== null) {
+      this.value = value;
+    }
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChangeCallback = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouchedCallback = fn;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
+  // Implementación de ControlValueAccessor
+  private onChangeCallback: (_: any) => void = () => {};
+
+  private onTouchedCallback: () => void = () => {};
 }

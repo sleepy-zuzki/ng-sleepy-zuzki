@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-input',
@@ -8,11 +8,14 @@ import { FormsModule } from '@angular/forms';
   imports: [FormsModule, CommonModule],
   template: `
     <div class="input-wrapper">
-      <label *ngIf="label" class="input-label">{{ label }}</label>
+      @if (label && name) {
+        <label for="name" class="input-label">{{ label }}</label>
+      }
       <input
         [type]="type"
         [placeholder]="placeholder"
         [disabled]="disabled"
+        [name]="name"
         [(ngModel)]="value"
         (ngModelChange)="onValueChange($event)"
         class="input-field" />
@@ -46,17 +49,52 @@ import { FormsModule } from '@angular/forms';
       @apply opacity-70 cursor-not-allowed;
       @apply dark:bg-sleepy-dark-bg-surface dark:text-sleepy-dark-text-secondary;
     }
-  `]
+  `],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => InputComponent),
+      multi: true
+    }
+  ]
 })
-export class InputComponent {
+export class InputComponent implements ControlValueAccessor {
   @Input() type = 'text';
   @Input() placeholder = '';
   @Input() label = '';
   @Input() disabled = false;
   @Input() value: string = '';
+  @Input() name: string = '';
   @Input() onChange: (value: string) => void = () => {};
+  @Output() valueChange = new EventEmitter<string>();
 
   onValueChange(value: string): void {
     this.onChange(value);
+    this.valueChange.emit(value);
+    this.onChangeCallback(value);
   }
+
+  // Métodos de ControlValueAccessor
+  writeValue(value: any): void {
+    if (value !== undefined && value !== null) {
+      this.value = value;
+    }
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChangeCallback = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouchedCallback = fn;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
+  // Implementación de ControlValueAccessor
+  private onChangeCallback: (_: any) => void = () => {};
+
+  private onTouchedCallback: () => void = () => {};
 }

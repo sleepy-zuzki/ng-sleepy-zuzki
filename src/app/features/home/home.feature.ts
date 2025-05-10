@@ -4,6 +4,10 @@ import { BadgeComponent } from '@components/ui/badge/badge.component';
 import { NgOptimizedImage } from '@angular/common';
 import { GithubDataApiService } from '@services/github-data-api.service';
 import { Overlay } from '@core/models/overlay.model';
+import { FormsModule, NgForm } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { catchError, pipe, throwError } from 'rxjs';
+import { ResponsiveImgComponent } from '@components/ui/responsive-img/responsive-img.component';
 
 @Component({
   selector: 'app-home-feature',
@@ -14,7 +18,9 @@ import { Overlay } from '@core/models/overlay.model';
     TextareaComponent,
     BadgeComponent,
     ProjectCardComponent,
-    NgOptimizedImage
+    NgOptimizedImage,
+    FormsModule,
+    ResponsiveImgComponent
   ],
   templateUrl: './home.feature.html',
   styleUrl: './home.feature.css',
@@ -29,7 +35,16 @@ export class HomeFeatureComponent {
   projects: Overlay[] = [];
   windowWidth: number = 0;
 
-  constructor(private apiService: GithubDataApiService) {
+  formData = {
+    name: '',
+    email: '',
+    message: ''
+  }
+
+  constructor(
+    private apiService: GithubDataApiService,
+    private http: HttpClient
+  ) {
     this.apiService.fetchOverlays();
     this.windowWidth = window.innerWidth;
     effect(() => {
@@ -40,5 +55,46 @@ export class HomeFeatureComponent {
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
     this.windowWidth = window.innerWidth;
+  }
+
+  onSubmit(form: NgForm) {
+    if (form.invalid) {
+      console.error('Formulario Invalido');
+      return;
+    }
+
+    const url = "https://hook.us2.make.com/zl0p2vv4190wklivjadktnec326qzqs6";
+    const values = form.value;
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    }
+
+    this.http.post(url, values, httpOptions)
+    .pipe(
+      catchError(error => {
+        console.error(error);
+        return throwError(() => new Error('Ocurrió un error al enviar el formulario. Por favor, inténtalo de nuevo.'));
+      })
+    )
+    .subscribe({
+      next: data => {
+        form.reset();
+
+        this.formData = {
+          name: '',
+          email: '',
+          message: ''
+        };
+      },
+      error: err => {
+        // Aquí puedes manejar el error que fue relanzado o uno nuevo
+        console.error('Error en la suscripción:', err);
+        // Podrías mostrar un mensaje de error al usuario aquí
+      }
+
+    });
   }
 }
