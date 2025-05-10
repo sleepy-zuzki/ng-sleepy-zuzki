@@ -1,12 +1,11 @@
 import { Component, effect } from '@angular/core';
-import { ButtonComponent, ProjectCardComponent } from '@components/ui';
+import { ProjectCardComponent } from '@components/ui';
 import { Overlay } from '@core/models/overlay.model';
 import { GithubDataApiService } from '@services/github-data-api.service';
 
 @Component({
   selector: 'app-works-feature',
   imports: [
-    ButtonComponent,
     ProjectCardComponent
   ],
   templateUrl: './works.feature.html',
