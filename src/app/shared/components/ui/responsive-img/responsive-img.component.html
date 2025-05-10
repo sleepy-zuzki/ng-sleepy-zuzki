@@ -1,0 +1,14 @@
+<picture>
+  <source
+    [attr.sizes]="sizes"
+    [attr.srcset]="srcset"
+    type="image/webp"
+  />
+  <img
+    [alt]="alt"
+    [src]="fallbackSrc"
+    class="max-w-full h-auto"
+    decoding="async"
+    loading="lazy"
+  />
+</picture>
