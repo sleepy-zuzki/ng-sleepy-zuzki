@@ -26,9 +26,9 @@
     </div>
 
     @if (buttonText) {
-      <app-button
+      <app-button routerLink="/works/{{ project.id }}"
         class="self-start mt-4">
-        {{ buttonText }}
+        <button-text class="text-sleepy-light-text-primary dark:text-sleepy-dark-text-primary">{{ buttonText }}</button-text>
       </app-button>
     }
   </div>

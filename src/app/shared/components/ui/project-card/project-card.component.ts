@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, HostBinding, Input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ButtonComponent } from '@components/ui';
 import { Overlay } from '@core/models/overlay.model';
@@ -12,7 +12,8 @@ import { Overlay } from '@core/models/overlay.model';
     NgOptimizedImage
   ],
   templateUrl: './project-card.component.html',
-  styleUrls: ['./project-card.component.css']
+  styleUrls: ['./project-card.component.css'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ProjectCardComponent {
   @Input({ required: true }) project: Overlay = new Overlay();
