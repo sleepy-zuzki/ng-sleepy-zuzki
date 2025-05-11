@@ -7,14 +7,11 @@ import { GithubDataApiService } from '@services/github-data-api.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LayoutModel } from '@core/models/layout.model';
 import { ButtonComponent } from '@components/ui';
-import { LinkComponent } from '@components/ui/link/link.component';
-import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-work-detail-feature',
   imports: [
-    ButtonComponent,
-    NgOptimizedImage
+    ButtonComponent
   ],
   templateUrl: './work-details.component.html',
   styleUrl: './work-details.component.css'
