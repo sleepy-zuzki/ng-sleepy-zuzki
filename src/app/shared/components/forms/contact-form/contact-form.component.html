@@ -7,7 +7,7 @@
                  placeholder="Sleepy Zuzki">
       </app-input>
 
-      @if (name && name?.invalid && (name.dirty || name?.touched)) {
+      @if (name && name.invalid && (name.dirty || name.touched)) {
         <div class="text-red-500">
           <fa-icon [icon]="faCircleExclamation"/> El nombre no es valido
         </div>
@@ -20,7 +20,7 @@
                  name="email" placeholder="zuzki@sleepy.com">
       </app-input>
 
-      @if (email && email?.invalid && (email.dirty || email?.touched)) {
+      @if (email && email.invalid && (email.dirty || email.touched)) {
         <div class="text-red-500">
           <fa-icon [icon]="faCircleExclamation"/> El correo no es valido
         </div>
@@ -35,7 +35,7 @@
                     placeholder="Escribe tu mensaje aquí" required>
       </app-textarea>
 
-      @if (message && message?.invalid && (message.dirty || message?.touched)) {
+      @if (message && message.invalid && (message.dirty || message.touched)) {
         <div class="text-red-500">
           <fa-icon [icon]="faCircleExclamation"/> El mensaje es requerido
         </div>
