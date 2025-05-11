@@ -1,6 +1,6 @@
 <app-header></app-header>
 
-<main class="container mx-auto max-w-[1000px] min-h-screen p-0 md:p-4">
+<main [ngClass]="{'container min-h-screen mx-auto max-w-[1000px] p-0 md:p-4': !isWorkDetailsPage}" class="">
   <router-outlet/>
 </main>
 
