@@ -10,12 +10,14 @@ import { OverlayStatus } from '@core/enums/overlays.enum';
 export class Overlay implements IOverlay {
   #id: string;
   #name: string;
+  #description: string;
   #status: OverlayStatus;
   #preview: string;
   #owner: string | Creator;
   #creator: string | Creator;
   #technologies: string;
   #layouts: string | LayoutModel[];
+  #creation_date: Date;
 
   /**
    * Crea una instancia de Overlay.
@@ -28,6 +30,8 @@ export class Overlay implements IOverlay {
     this.#name = data?.name ?? '';
     this.#status = data?.status ?? OverlayStatus.BORRADOR;
     this.#preview = data?.preview ?? '';
+    this.#description = data?.description ?? '';
+    this.#creation_date = data?.creation_date ?? new Date();
 
     // Procesar owner
     if (typeof data?.owner === 'string' && availableCreators?.length) {
@@ -81,6 +85,14 @@ export class Overlay implements IOverlay {
   /** Establece el nombre del overlay. */
   set name(value: string) {
     this.#name = value;
+  }
+
+  get description(): string {
+    return this.#description;
+  }
+
+  set description(value: string) {
+    this.#description = value;
   }
 
   /** Obtiene el estado del overlay. */
@@ -143,6 +155,14 @@ export class Overlay implements IOverlay {
     this.#layouts = value;
   }
 
+  get creation_date(): Date {
+    return this.#creation_date;
+  }
+
+  set creation_date(value: Date) {
+    this.#creation_date = value;
+  }
+
   /**
    * Convierte el modelo Overlay a un objeto JSON que cumple la interfaz IOverlay.
    * @returns Objeto IOverlay.
@@ -151,12 +171,14 @@ export class Overlay implements IOverlay {
     return {
       id: this.#id,
       name: this.#name,
+      description: this.#description,
       status: this.#status,
       preview: this.#preview,
       owner: this.#owner,
       creator: this.#creator,
       technologies: this.#technologies,
-      layouts: this.#layouts
+      layouts: this.#layouts,
+      creation_date: this.#creation_date,
     };
   }
 }
