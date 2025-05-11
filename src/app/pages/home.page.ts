@@ -14,6 +14,6 @@ import { HomeFeatureComponent } from '@features/home/home.feature';
  * Componente que representa la página de inicio (Home Page) de la aplicación.
  * Actúa como contenedor de layout para la característica de Home.
  */
-export class HomeComponent {
+export class HomePage {
   // Logic moved to HomeFeatureComponent
 }

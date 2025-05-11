@@ -10,5 +10,5 @@ import { WorksFeature } from '@features/works/works.feature';
   template: `<app-works-feature />`,
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class WorksComponent {
+export class WorksPage {
 }
