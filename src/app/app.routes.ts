@@ -1,10 +1,18 @@
 import { Routes } from '@angular/router';
-import { LandingComponent } from '@pages/landing/landing.component';
-import { OverlaysComponent } from '@pages/overlays/overlays.component';
-import { ViewComponent } from '@pages/overlays/overlay/view/view.component';
-
 export const routes: Routes = [
-  { path: 'overlays', component: OverlaysComponent },
-  { path: 'overlays/:overlay_id', component: ViewComponent },
-  { path: '', component: LandingComponent }
+  {
+    path: 'about',
+    loadComponent: () => import('@pages/about.page').then(m => m.AboutPage)
+  },
+  {
+    path: 'works',
+    loadComponent: () => import('@pages/works.page').then(m => m.WorksPage)
+  },
+  {
+    path: 'works/:id',
+    loadComponent: () => import('@pages/work-details.page').then(m => m.WorkDetailsPage)
+  },
+  { path: '',
+    loadComponent: () => import('@pages/home.page').then(m => m.HomePage)
+  }
 ];

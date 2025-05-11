@@ -20,20 +20,25 @@ export const GithubDataInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> => {
-  // Verificar si la URL comienza con 'data/'
 
-  // Cabeceras estándar para las peticiones a la API
-  const headers: HttpHeaders = new HttpHeaders({
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  });
+  if (!req.url.startsWith('http') || !req.url.startsWith('https')) {
+    // Verificar si la URL comienza con 'data/'
 
-  // Construir la URL completa anteponiendo la URL base del worker
-  const url: string = `https://github-worker.zuzki.dev/${req.url}`;
+    // Cabeceras estándar para las peticiones a la API
+    const headers: HttpHeaders = new HttpHeaders({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    });
 
-  // Clonar la solicitud original con la nueva URL y cabeceras
-  const newRequest: HttpRequest<unknown> = req.clone({ url, headers });
+    // Construir la URL completa anteponiendo la URL base del worker
+    const url: string = `https://github-worker.zuzki.dev/${req.url}`;
 
-  // Pasar la nueva solicitud al siguiente manejador
-  return next(newRequest);
+    // Clonar la solicitud original con la nueva URL y cabeceras
+    const newRequest: HttpRequest<unknown> = req.clone({ url, headers });
+
+    // Pasar la nueva solicitud al siguiente manejador
+    return next(newRequest);
+  }
+
+  return next(req);
 };

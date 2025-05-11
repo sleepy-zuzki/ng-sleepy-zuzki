@@ -10,6 +10,8 @@ export interface Overlay {
   id: string;
   /** Nombre del overlay. */
   name: string;
+  /** Descripción del overlay. */
+  description: string;
   /** Estado actual del overlay. */
   status: OverlayStatus;
   /** URL de la imagen de vista previa del overlay. */
@@ -22,4 +24,6 @@ export interface Overlay {
   technologies: string;
   /** Layouts asociados al overlay (puede ser un ID o un array de objetos LayoutModel). */
   layouts: string | LayoutModel[];
+  /** Fecha de creación del overlay. */
+  creation_date: Date;
 }

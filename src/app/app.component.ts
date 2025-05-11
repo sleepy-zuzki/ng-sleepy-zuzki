@@ -1,43 +1,76 @@
 import {
   Component,
-  CUSTOM_ELEMENTS_SCHEMA, effect,
   ElementRef,
   Signal,
-  ViewChild
+  ViewChild,
+  OnDestroy
 } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { Overlay } from '@core/models/overlay.model';
 import { GithubDataApiService } from '@services/github-data-api.service';
 import { LayoutModel } from '@core/models/layout.model';
 import { OverlayService } from '@services/overlay.service';
+import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawesome';
+import { faCode } from '@awesome.me/kit-15d5a6a4b5/icons/duotone/solid';
+import { HeaderComponent } from '@components/header/header.component';
+import { FooterComponent } from '@components/footer/footer.component';
+import { IMAGE_CONFIG, ImageConfig, NgClass } from '@angular/common';
+import { Router, NavigationEnd, Event as RouterEvent } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
+
+const customImageConfig: ImageConfig = {
+  breakpoints: [480, 960, 1280, 1920],
+  disableImageSizeWarning: false
+}
 
 /**
  * Componente raíz de la aplicación.
  */
 @Component({
   selector: 'app-root',
-    imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, FontAwesomeModule, HeaderComponent, FooterComponent, NgClass],
+  providers: [
+    {provide: IMAGE_CONFIG, useValue: customImageConfig}
+  ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
   /** Referencia al elemento del cajón lateral (drawer). */
   @ViewChild('drawer') drawer?: ElementRef;
   /** Título de la aplicación. */
   title: string = 'Sleepy Zuzki';
   /** Señal que contiene la lista de overlays disponibles. */
   readonly overlays: Signal<Overlay[]>;
+  readonly faCode: IconDefinition = faCode;
+  isWorkDetailsPage: boolean = false;
+  private readonly routerSubscription: Subscription;
 
   /**
    * @param apiService Servicio para interactuar con la API de datos de GitHub.
    * @param overlayService Servicio para gestionar el estado de los overlays y layouts.
+   * @param router
    */
   constructor (
     readonly apiService: GithubDataApiService,
-    readonly overlayService: OverlayService
+    readonly overlayService: OverlayService,
+    private router: Router
   ) {
     this.overlays = this.apiService.overlays;
+    this.routerSubscription = this.router.events.pipe(
+      filter((event: RouterEvent): event is NavigationEnd => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      // Verificamos si estamos en la ruta de detalles de trabajo (/works/:id)
+      this.isWorkDetailsPage = event.urlAfterRedirects.includes('/works/') &&
+        !event.urlAfterRedirects.endsWith('/works');
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
   }
 
   /**
