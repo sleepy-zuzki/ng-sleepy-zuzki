@@ -2,11 +2,13 @@ import { Component, effect } from '@angular/core';
 import { ProjectCardComponent } from '@components/ui';
 import { Overlay } from '@core/models/overlay.model';
 import { GithubDataApiService } from '@services/github-data-api.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-works-feature',
   imports: [
-    ProjectCardComponent
+    ProjectCardComponent,
+    RouterLink
   ],
   templateUrl: './works.feature.html',
   styleUrl: './works.feature.css'

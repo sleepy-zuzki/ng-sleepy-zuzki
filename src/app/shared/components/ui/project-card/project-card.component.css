@@ -1,6 +1,7 @@
 /* Estilos base para el componente host */
 :host {
-  @apply mb-4 border-sleepy-light-border dark:border-sleepy-dark-border;
+  @apply block;
+  @apply border-sleepy-light-border dark:border-sleepy-dark-border;
   @apply border rounded-lg transition duration-300 ease-in;
   @apply hover:border-sleepy-accent hover:scale-105 hover:text-sleepy-accent;
 }

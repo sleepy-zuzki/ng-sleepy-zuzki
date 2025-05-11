@@ -18,6 +18,7 @@ export class ProjectCardComponent {
   @Input({ required: true }) project: Overlay = new Overlay();
   @Input() buttonText: string | null = null;
   @Input() variant: 'elongated' | 'square' = 'elongated';
+  @Input() showDescription: boolean = true;
 
   @HostBinding('class') get hostClasses(): string {
     return `project-card-${this.variant}`;
