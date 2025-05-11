@@ -1,6 +1,6 @@
 import { Injectable, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Overlay } from '@core/models/overlay.model';
 import { Overlay as IOverlay } from '@core/interfaces/overlay.interface';
 import { Creator } from '@core/models/creator.model';
@@ -15,7 +15,7 @@ import { OverlayStatus } from '@core/enums/overlays.enum';
 import { LayoutStatus } from '@core/enums/layout.enum';
 import { LoadState } from '@core/enums/load-state.enum';
 import { ErrorMessage } from '@core/interfaces/error-message.interface';
-import { BehaviorSubject, Observable, catchError, finalize, map, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, map, Observable, of, switchMap, tap } from 'rxjs';
 
 
 /**
@@ -368,12 +368,11 @@ export class GithubDataApiService {
     return this.http.get<IOverlay[]>('overlays', { params }).pipe(
       map((response: IOverlay[]): Overlay[] => {
         const creators: Creator[] = this.#creatorsSubject.getValue();
-        const overlays: Overlay[] = response
-          .filter((data: IOverlay) => data.status === OverlayStatus.ACTIVO)
-          .map((data: IOverlay) =>
-            new Overlay({...data, layouts: ''}, creators)
-          );
-        return overlays;
+        return response
+        .filter((data: IOverlay) => data.status === OverlayStatus.ACTIVO)
+        .map((data: IOverlay) =>
+          new Overlay({...data, layouts: ''}, creators)
+        );
       }),
       tap((overlays: Overlay[]) => {
         this.#overlaysSubject.next(overlays);
