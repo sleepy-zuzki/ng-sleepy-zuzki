@@ -8,7 +8,7 @@ import { Component, Input } from '@angular/core';
 export class ResponsiveImgComponent {
   @Input() name!: string; // Sin extensión
   @Input() alt: string = '';
-  @Input() sizes: string = '(max-width: 640px) 100vw, (max-width: 1024px) 75vw, 50vw';
+  @Input() sizes: string = '(max-width: 640px) 100vw, 640px';
   @Input() cdnBaseUrl: string = 'https://cdn.zuzki.dev/images'; // Tu bucket R2 público
   @Input() widths: number[] = [320, 460, 768, 1280, 1920];
 

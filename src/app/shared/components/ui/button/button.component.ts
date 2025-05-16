@@ -14,7 +14,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         [attr.href]="href || null"
         [attr.aria-label]="ariaLabel">
         <ng-content select="button-text">
-          <span><ng-content/></span>
+          <ng-content/>
         </ng-content>
       </a>
     } @else {
@@ -25,7 +25,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         [attr.aria-label]="ariaLabel"
         (click)="emitCallback($event)">
         <ng-content select="button-text">
-          <span><ng-content/></span>
+          <ng-content/>
         </ng-content>
       </button>
     }
@@ -35,9 +35,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       @apply rounded-md font-medium transition-colors px-4 py-2;
       @apply select-none w-full inline-block text-center cursor-pointer;
       /* Colores primarios */
-      @apply bg-sleepy-accent text-sleepy-light-text-onAccent;
+      @apply bg-sleepy-accent text-sleepy-light-text-primary;
       @apply hover:bg-sleepy-accent-hover disabled:opacity-70;
-      @apply dark:text-sleepy-dark-text-onAccent;
     }
 
     .btn-secondary {
@@ -52,7 +51,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 
     a.btn-primary, a.btn-secondary {
       text-decoration: none;
-      @apply text-sleepy-light-text-primary dark:text-sleepy-dark-text-primary;
+      @apply text-sleepy-light-text-primary;
     }
   `],
 })

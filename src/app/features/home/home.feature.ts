@@ -6,9 +6,9 @@ import { Overlay } from '@core/models/overlay.model';
 import { FormGroup, FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
-import { ResponsiveImgComponent } from '@components/ui/responsive-img/responsive-img.component';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { ContactFormComponent } from '@components/forms/contact-form/contact-form.component';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-home-feature',
@@ -18,8 +18,8 @@ import { ContactFormComponent } from '@components/forms/contact-form/contact-for
     BadgeComponent,
     ProjectCardComponent,
     FormsModule,
-    ResponsiveImgComponent,
-    ContactFormComponent
+    ContactFormComponent,
+    NgOptimizedImage
   ],
   templateUrl: './home.feature.html',
   styleUrl: './home.feature.css',

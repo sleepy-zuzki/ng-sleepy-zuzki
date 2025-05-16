@@ -6,13 +6,15 @@ import { routes } from './app.routes';
 import { GithubDataInterceptor } from '@core/interceptors/github-data.interceptor';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHotToastConfig } from '@ngxpert/hot-toast';
+import { provideCloudflareLoader } from '@angular/common';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(withInterceptors([GithubDataInterceptor])),
     provideZoneChangeDetection({ eventCoalescing: true }),
+    provideCloudflareLoader('https://zuzki.dev'),
     provideRouter(routes),
-    provideAnimations(),
-    provideHotToastConfig()
+    provideHotToastConfig(),
+    provideAnimations()
   ]
 };

@@ -12,7 +12,7 @@
       'elongated': variant === 'elongated',
       'square': variant === 'square',
     }"
-    [ngSrc]="project.preview"
+    [ngSrc]="`/${project.preview}`"
     [width]="variant === 'elongated' ? 300 : 300"/>
 
   <div class="flex flex-col justify-between card-body">
@@ -28,7 +28,7 @@
     @if (buttonText) {
       <app-button routerLink="/works/{{ project.id }}"
         class="self-start mt-4">
-        <button-text class="text-sleepy-light-text-primary dark:text-sleepy-dark-text-primary">{{ buttonText }}</button-text>
+        <button-text class="text-sleepy-light-text-primary">{{ buttonText }}</button-text>
       </app-button>
     }
   </div>
