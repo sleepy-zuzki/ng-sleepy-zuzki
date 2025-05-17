@@ -11,7 +11,7 @@ import { GithubDataApiService } from '@services/github-data-api.service';
 import { LayoutModel } from '@core/models/layout.model';
 import { OverlayService } from '@services/overlay.service';
 import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawesome';
-import { faCode } from '@awesome.me/kit-15d5a6a4b5/icons/duotone/solid';
+import { faCode } from '@awesome.me/kit-6cba0026a3/icons/duotone/solid';
 import { HeaderComponent } from '@components/header/header.component';
 import { FooterComponent } from '@components/footer/footer.component';
 import { IMAGE_CONFIG, ImageConfig, NgClass } from '@angular/common';

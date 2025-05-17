@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { faGithub, faTwitch, faXTwitter } from '@awesome.me/kit-15d5a6a4b5/icons/classic/brands';
+import { faGithub, faTwitch, faXTwitter } from '@awesome.me/kit-6cba0026a3/icons/classic/brands';
 import { FaIconComponent, IconDefinition } from '@fortawesome/angular-fontawesome';
-import { faArrowUpRightFromSquare } from '@awesome.me/kit-15d5a6a4b5/icons/duotone/solid';
+import { faArrowUpRightFromSquare } from '@awesome.me/kit-6cba0026a3/icons/duotone/solid';
 
 @Component({
   selector: 'app-footer',

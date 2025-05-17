@@ -1,7 +1,7 @@
 import { Component, Inject, Renderer2 } from '@angular/core';
 import { ButtonComponent } from '@components/ui/button/button.component';
 import { FaIconComponent, IconDefinition } from '@fortawesome/angular-fontawesome';
-import { faMoon, faSun } from '@awesome.me/kit-15d5a6a4b5/icons/duotone/solid';
+import { faMoon, faSun } from '@awesome.me/kit-6cba0026a3/icons/duotone/solid';
 import { DOCUMENT } from '@angular/common';
 
 @Component({

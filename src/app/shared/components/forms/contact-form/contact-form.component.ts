@@ -1,7 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Output } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonComponent, InputComponent, TextareaComponent } from '@components/ui';
-import { faCircleExclamation } from '@awesome.me/kit-15d5a6a4b5/icons/duotone/solid';
+import { faCircleExclamation } from '@awesome.me/kit-6cba0026a3/icons/duotone/solid';
 import { FaIconComponent, IconDefinition } from '@fortawesome/angular-fontawesome';
 
 @Component({
