@@ -18,6 +18,7 @@ import { IMAGE_CONFIG, ImageConfig, NgClass } from '@angular/common';
 import { Router, NavigationEnd, Event as RouterEvent } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { OverlayApiService } from '@services/overlay-api.service';
 
 const customImageConfig: ImageConfig = {
   breakpoints: [480, 960, 1280, 1920],
@@ -48,16 +49,16 @@ export class AppComponent implements OnDestroy {
   private readonly routerSubscription: Subscription;
 
   /**
-   * @param apiService Servicio para interactuar con la API de datos de GitHub.
+   * @param overlayApiService Servicio para interactuar con la API de datos.
    * @param overlayService Servicio para gestionar el estado de los overlays y layouts.
    * @param router
    */
   constructor (
-    readonly apiService: GithubDataApiService,
+    readonly overlayApiService: OverlayApiService,
     readonly overlayService: OverlayService,
     private router: Router
   ) {
-    this.overlays = this.apiService.overlays;
+    this.overlays = this.overlayApiService.data;
     this.routerSubscription = this.router.events.pipe(
       filter((event: RouterEvent): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {

@@ -1,8 +1,8 @@
-import { Component, effect } from '@angular/core';
+import { Component, effect, Signal } from '@angular/core';
 import { ProjectCardComponent } from '@components/ui';
 import { Overlay } from '@core/models/overlay.model';
-import { GithubDataApiService } from '@services/github-data-api.service';
 import { RouterLink } from '@angular/router';
+import { OverlayApiService } from '@services/overlay-api.service';
 
 @Component({
   selector: 'app-works-feature',
@@ -14,12 +14,15 @@ import { RouterLink } from '@angular/router';
   styleUrl: './works.feature.css'
 })
 export class WorksFeature {
-  projects: Overlay[] = [];
+  projects: Signal<Overlay[]>;
 
-  constructor(private apiService: GithubDataApiService) {
-    this.apiService.fetchOverlays();
+  constructor(private overlayApiService: OverlayApiService) {
+    this.projects = this.overlayApiService.data;
+
     effect(() => {
-      this.projects = this.apiService.overlays();
+      if (this.projects().length === 0) {
+        this.overlayApiService.fetchOverlays();
+      }
     });
   }
 }

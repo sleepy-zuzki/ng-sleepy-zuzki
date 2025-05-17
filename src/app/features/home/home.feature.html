@@ -41,7 +41,7 @@
   <section class="flex flex-col gap-2" id="projects">
     <h2 class="text-[1.75rem]">Trabajos</h2>
 
-    @for (project of projects; track project.id) {
+    @for (project of projects(); track project.id) {
       <app-project-card
         class="w-full"
         [project]="project"

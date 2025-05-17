@@ -13,7 +13,7 @@
   </header>
 
   <section class="flex flex-row flex-wrap mt-8 gap-3 justify-between">
-    @for (project of projects; track project.id) {
+    @for (project of projects(); track project.id) {
       <a class="w-[176px] no-underline hover:no-underline focus:ring-0 m-0"
          routerLink="/works/{{ project.id }}">
         <app-project-card

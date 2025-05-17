@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, HostListener } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, HostListener, Signal } from '@angular/core';
 import { ButtonComponent, ProjectCardComponent } from '@components/ui';
 import { BadgeComponent } from '@components/ui/badge/badge.component';
 import { GithubDataApiService } from '@services/github-data-api.service';
@@ -9,6 +9,7 @@ import { catchError, throwError } from 'rxjs';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { ContactFormComponent } from '@components/forms/contact-form/contact-form.component';
 import { NgOptimizedImage } from '@angular/common';
+import { OverlayApiService } from '@services/overlay-api.service';
 
 @Component({
   selector: 'app-home-feature',
@@ -31,20 +32,21 @@ import { NgOptimizedImage } from '@angular/common';
  */
 export class HomeFeatureComponent {
   technologies: string[] = ['Javascript', 'React', 'Node.js', 'Express', 'HTML5', 'CSS3', 'MongoDB', 'PostgreSQL', 'Git', 'AWS', 'Docker', 'Webpack'];
-  projects: Overlay[] = [];
+  projects: Signal<Overlay[]>;
   windowWidth: number = 0;
 
-
-
   constructor(
-    private apiService: GithubDataApiService,
+    private overlayApiService: OverlayApiService,
     private http: HttpClient,
     private toast: HotToastService
   ) {
-    this.apiService.fetchOverlays();
+    this.projects = this.overlayApiService.data;
     this.windowWidth = window.innerWidth;
+
     effect(() => {
-      this.projects = this.apiService.overlays();
+      if (this.projects().length === 0) {
+        this.overlayApiService.fetchOverlays();
+      }
     });
   }
 

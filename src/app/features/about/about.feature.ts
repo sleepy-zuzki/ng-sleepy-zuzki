@@ -1,8 +1,9 @@
-import { Component, effect, HostListener } from '@angular/core';
+import { Component, effect, HostListener, Signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { ProjectCardComponent } from '@components/ui';
 import { Overlay } from '@core/models/overlay.model';
 import { GithubDataApiService } from '@services/github-data-api.service';
+import { OverlayApiService } from '@services/overlay-api.service';
 
 @Component({
   selector: 'app-about-feature',
@@ -14,16 +15,19 @@ import { GithubDataApiService } from '@services/github-data-api.service';
   styleUrl: './about.feature.css'
 })
 export class AboutFeatureComponent {
-  projects: Overlay[] = [];
+  projects: Signal<Overlay[]>;
   windowWidth: number = 0;
 
   constructor (
-    private apiService: GithubDataApiService
+    private overlayApiService: OverlayApiService,
   ) {
-    this.apiService.fetchOverlays();
+    this.projects = this.overlayApiService.data;
     this.windowWidth = window.innerWidth;
+
     effect(() => {
-      this.projects = this.apiService.overlays();
+      if (this.projects().length === 0) {
+        this.overlayApiService.fetchOverlays();
+      }
     });
   }
 

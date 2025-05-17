@@ -7,6 +7,7 @@ import { GithubDataApiService } from '@services/github-data-api.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LayoutModel } from '@core/models/layout.model';
 import { ButtonComponent } from '@components/ui';
+import { OverlayApiService } from '@services/overlay-api.service';
 
 @Component({
   selector: 'app-work-detail-feature',
@@ -26,25 +27,32 @@ export class WorkDetailsComponent implements AfterViewInit {
   /**
    * @param route Servicio para acceder a los parámetros de la ruta activa.
    * @param apiService Servicio para obtener datos de la API.
+   * @param overlayApiService
    * @param overlayService Servicio para gestionar el estado del overlay/layout.
    */
   constructor (
     private route: ActivatedRoute,
-    private apiService: GithubDataApiService,
+    private overlayApiService: OverlayApiService,
     private overlayService: OverlayService
   ) {
-    this.apiService.fetchOverlays();
+    const availableOverlays: Signal<Overlay[]> = this.overlayApiService.data;
+
     this.overlayId = toSignal(
       this.route.paramMap.pipe(map(params => params.get('id'))),
       { initialValue: null }
     );
 
-    effect((): void => {
-      const currentOverlayId: string | null = this.overlayId();
-      const availableOverlays: Overlay[] = this.apiService.overlays();
+    effect(() => {
+      if (availableOverlays().length === 0) {
+        this.overlayApiService.fetchOverlays();
+      }
+    });
 
-      if (availableOverlays && availableOverlays.length > 0 && currentOverlayId !== null) {
-        this.currentOverlay = availableOverlays.find(
+    effect((): void => {
+      const currentOverlaysValue: Overlay[] = availableOverlays();
+      const currentOverlayId: string | null = this.overlayId();
+      if (currentOverlaysValue && currentOverlaysValue.length > 0 && currentOverlayId !== null) {
+        this.currentOverlay = currentOverlaysValue.find(
           (overlay: Overlay) => overlay.id === currentOverlayId
         ) ?? null;
 
@@ -52,20 +60,16 @@ export class WorkDetailsComponent implements AfterViewInit {
 
         // Si se encontró el overlay, intentar establecer su primer layout
         if (this.currentOverlay && Array.isArray(this.currentOverlay.layouts)) {
-          const layouts = this.currentOverlay.layouts as LayoutModel[];
+          const layouts: LayoutModel[] = this.currentOverlay.layouts;
           this.overlayService.setCurrentLayout(layouts.length > 0 ? layouts[0] : null);
-        } else {
-          this.overlayService.setCurrentLayout(null);
         }
       } else {
+        // Si no hay overlays disponibles, o no hay currentOverlayId, resetea
+        this.currentOverlay = null;
         this.overlayService.setCurrentOverlay(null);
         this.overlayService.setCurrentLayout(null);
-        this.currentOverlay = null;
-
-        if (!availableOverlays || availableOverlays.length === 0) {
-          this.apiService.fetchOverlays();
-        }
       }
+
     });
 
     /**

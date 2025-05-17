@@ -14,7 +14,6 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideCloudflareLoader('https://zuzki.dev'),
     provideRouter(routes),
-    provideHotToastConfig(),
-    provideAnimations()
+    provideHotToastConfig()
   ]
 };
