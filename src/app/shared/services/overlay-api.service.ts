@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, finalize, map, of, switchMap, tap, catchError } from 'rxjs';
+import { Observable, map, of, switchMap, tap, catchError } from 'rxjs';
 import { Overlay } from '@core/models/overlay.model';
 import { Overlay as IOverlay } from '@core/interfaces/overlay.interface';
 import { OverlayStatus } from '@core/enums/overlays.enum';

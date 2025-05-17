@@ -1,7 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, HostListener, Signal } from '@angular/core';
 import { ButtonComponent, ProjectCardComponent } from '@components/ui';
 import { BadgeComponent } from '@components/ui/badge/badge.component';
-import { GithubDataApiService } from '@services/github-data-api.service';
 import { Overlay } from '@core/models/overlay.model';
 import { FormGroup, FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';

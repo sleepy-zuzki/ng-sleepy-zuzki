@@ -22,7 +22,7 @@
     "@angular/platform-browser": "^19.2.8",
     "@angular/platform-browser-dynamic": "^19.2.8",
     "@angular/router": "^19.2.8",
-    "@awesome.me/kit-15d5a6a4b5": "^1.0.7",
+    "@awesome.me/kit-6cba0026a3": "^1.0.4",
     "@fortawesome/angular-fontawesome": "^1.0.0",
     "@ngneat/overview": "6.1.1",
     "@ngxpert/hot-toast": "4.1.2",

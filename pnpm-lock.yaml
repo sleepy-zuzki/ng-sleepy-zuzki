@@ -32,9 +32,9 @@ importers:
       '@angular/router':
         specifier: ^19.2.8
         version: 19.2.8(@angular/common@19.2.8(@angular/core@19.2.8(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.8(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.8(@angular/animations@19.2.8(@angular/common@19.2.8(@angular/core@19.2.8(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.8(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.8(@angular/core@19.2.8(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.8(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
-      '@awesome.me/kit-15d5a6a4b5':
-        specifier: ^1.0.7
-        version: 1.0.7
+      '@awesome.me/kit-6cba0026a3':
+        specifier: ^1.0.4
+        version: 1.0.4
       '@fortawesome/angular-fontawesome':
         specifier: ^1.0.0
         version: 1.0.0(@angular/core@19.2.8(rxjs@7.8.2)(zone.js@0.15.0))
@@ -290,8 +290,8 @@ packages:
       '@angular/platform-browser': 19.2.8
       rxjs: ^6.5.3 || ^7.4.0
 
-  '@awesome.me/kit-15d5a6a4b5@1.0.7':
-    resolution: {integrity: sha512-mShNBQr4g0NdRY1zVI2YHbUkJoenTzwU03GD+7zJ1oCPMY8EuCktwcXo8aKnPqW6hTzeOx28IbrRkU0xLi9tyw==, tarball: https://npm.fontawesome.com/@awesome.me/kit-15d5a6a4b5/-/1.0.7/kit-15d5a6a4b5-1.0.7.tgz}
+  '@awesome.me/kit-6cba0026a3@1.0.4':
+    resolution: {integrity: sha512-/nTrCdDz+9kG7lZdTiUEfiKBf07rwQym0LWlqscdO+wgUbWoqJgybRY9oDYNJNS1Nq2vTmpad0IiD0YrnLP8qA==}
     engines: {node: '>=16'}
 
   '@babel/code-frame@7.26.2':
@@ -4704,7 +4704,7 @@ snapshots:
       rxjs: 7.8.2
       tslib: 2.8.1
 
-  '@awesome.me/kit-15d5a6a4b5@1.0.7':
+  '@awesome.me/kit-6cba0026a3@1.0.4':
     dependencies:
       '@fortawesome/fontawesome-common-types': 6.7.2
 
