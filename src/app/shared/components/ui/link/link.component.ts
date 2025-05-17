@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { FaIconComponent, IconDefinition } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent, IconDefinition, SizeProp } from '@fortawesome/angular-fontawesome';
 import { faArrowUpRightFromSquare } from '@awesome.me/kit-15d5a6a4b5/icons/duotone/solid';
 
 @Component({
@@ -11,21 +11,24 @@ import { faArrowUpRightFromSquare } from '@awesome.me/kit-15d5a6a4b5/icons/duoto
   template: `
     <a
       [ngClass]="linkClasses"
-      [href]="!routerLink ? href : null"
+      [attr.href]="routerLink ? null : pageRef"
       [routerLink]="routerLink"
       [routerLinkActive]="routerLinkActiveClass"
       [target]="target"
-      [attr.rel]="isExternal ? 'noopener noreferrer' : null"
+      [attr.rel]="isExternal ? 'noopener noreferrer nofollow' : null"
       [attr.aria-label]="ariaLabel">
       <ng-content></ng-content>
-      <fa-icon
-        *ngIf="isExternal && showExternalIcon"
-        [icon]="externalIcon"
-        class="external-icon ml-1 text-xs"
-        [ngClass]="{'opacity-70': disabled}"
-        aria-hidden="true">
-      </fa-icon>
+      @if (isExternal && showExternalIcon) {
+        <fa-icon
+          [icon]="externalIcon"
+          [size]="externalIconSize"
+          class="external-icon ml-1 text-xs"
+          [ngClass]="{'opacity-70': disabled}"
+          aria-hidden="true">
+        </fa-icon>
+      }
     </a>
+
   `,
   styles: [`
     :host {
@@ -74,23 +77,24 @@ import { faArrowUpRightFromSquare } from '@awesome.me/kit-15d5a6a4b5/icons/duoto
   encapsulation: ViewEncapsulation.None
 })
 export class LinkComponent implements OnInit {
-  @Input() href: string = '';
+  @Input() pageRef: string = '';
   @Input() routerLink: string | any[] | null = null;
   @Input() routerLinkActiveClass: string = 'active';
   @Input() variant: 'internal' | 'external' | 'nav' = 'internal';
   @Input() target: '_blank' | '_self' | '_parent' | '_top' = '_self';
   @Input() disabled: boolean = false;
   @Input() ariaLabel: string = '';
-  @Input() showExternalIcon: boolean = true;
 
-  externalIcon: IconDefinition = faArrowUpRightFromSquare;
+  @Input() showExternalIcon: boolean = true;
+  @Input() externalIcon: IconDefinition = faArrowUpRightFromSquare;
+  @Input() externalIconSize: SizeProp = 'xs';
 
   get isExternal(): boolean {
     if (this.routerLink) return false;
 
-    if (this.href) {
-      return this.href.startsWith('http') ||
-             this.href.startsWith('//') ||
+    if (this.pageRef) {
+      return this.pageRef.startsWith('http') ||
+             this.pageRef.startsWith('//') ||
              this.target === '_blank';
     }
 

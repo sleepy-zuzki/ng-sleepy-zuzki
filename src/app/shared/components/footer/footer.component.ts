@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LinkComponent } from '@components/ui/link/link.component';
 import { faGithub, faTwitch, faXTwitter } from '@awesome.me/kit-15d5a6a4b5/icons/classic/brands';
-import { FaIconComponent, IconDefinition } from '@fortawesome/angular-fontawesome';
+import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule, RouterModule, LinkComponent, FaIconComponent],
+  imports: [CommonModule, RouterModule, LinkComponent],
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css']
 })

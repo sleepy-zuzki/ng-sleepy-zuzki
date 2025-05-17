@@ -5,14 +5,20 @@
         © 2025 Sleepy Zuzki. Todos los derechos reservados.
       </p>
       <div class="flex gap-4 mt-4 md:mt-0">
-        <app-link [showExternalIcon]="false" href="https://github.com/sleepy-zuzki">
-          <fa-icon [icon]="faGithub" size="2xl"/>
+        <app-link [externalIcon]="faGithub"
+                  [pageRef]="'https://github.com/sleepy-zuzki'"
+                  [showExternalIcon]="true"
+                  externalIconSize="2xl">
         </app-link>
-        <app-link [showExternalIcon]="false" href="https://twitch.tv/sleepy_zuzki">
-          <fa-icon [icon]="faTwitch" size="2xl"/>
+        <app-link [externalIcon]="faTwitch"
+                  [pageRef]="'https://twitch.tv/sleepy_zuzki'"
+                  [showExternalIcon]="true"
+                  externalIconSize="2xl">
         </app-link>
-        <app-link [showExternalIcon]="false" href="https://x.com/sleepy_zuzki">
-          <fa-icon [icon]="faXTwitter" size="2xl"/>
+        <app-link [externalIcon]="faXTwitter"
+                  [pageRef]="'https://x.com/sleepy_zuzki'"
+                  [showExternalIcon]="true"
+                  externalIconSize="2xl">
         </app-link>
       </div>
     </div>
