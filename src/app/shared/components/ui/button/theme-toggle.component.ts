@@ -1,8 +1,9 @@
-import { Component, Inject, Renderer2 } from '@angular/core';
+import { Component, Inject, Renderer2, PLATFORM_ID } from '@angular/core';
 import { ButtonComponent } from '@components/ui/button/button.component';
 import { FaIconComponent, IconDefinition } from '@fortawesome/angular-fontawesome';
 import { faMoon, faSun } from '@awesome.me/kit-6cba0026a3/icons/duotone/solid';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { LocalStorageService } from '@services/local-storage.service';
 
 @Component({
   selector: 'app-theme-toggle',
@@ -26,17 +27,23 @@ export class ThemeToggleComponent {
 
   constructor(
     private renderer: Renderer2,
-    @Inject(DOCUMENT) private document: Document) {
+    @Inject(DOCUMENT) private document: Document,
+    private localStorageService: LocalStorageService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
     this.checkInitialMode();
   }
 
   checkInitialMode(): void {
-    const isDarkMode: string | null = localStorage.getItem('darkMode');
+    const isDarkModeStored: string | null = this.localStorageService.getItem('darkMode');
 
-    if (isDarkMode === 'true' || (!isDarkMode && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      this.setDarkMode(true);
-    } else {
-      this.setDarkMode(false);
+    if (isPlatformBrowser(this.platformId)) {
+      const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (isDarkModeStored === 'true' || (!isDarkModeStored && prefersDarkScheme)) {
+        this.setDarkMode(true);
+      } else {
+        this.setDarkMode(false);
+      }
     }
   }
 
@@ -48,10 +55,13 @@ export class ThemeToggleComponent {
     this.isDarkMode = isDarkMode;
     if (isDarkMode) {
       this.renderer.addClass(this.document.documentElement, 'dark');
-      localStorage.setItem('darkMode', 'true'); // Guarda la preferencia
     } else {
       this.renderer.removeClass(this.document.documentElement, 'dark');
-      localStorage.setItem('darkMode', 'false'); // Guarda la preferencia
+    }
+
+    // Guardar preferencia solo si estamos en el navegador
+    if (isPlatformBrowser(this.platformId)) {
+      this.localStorageService.setItem('darkMode', isDarkMode ? 'true' : 'false');
     }
   }
 }

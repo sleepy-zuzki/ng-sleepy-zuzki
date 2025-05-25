@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, HostListener, Signal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, HostListener, Inject, PLATFORM_ID, Signal } from '@angular/core';
 import { ButtonComponent, ProjectCardComponent } from '@components/ui';
 import { BadgeComponent } from '@components/ui/badge/badge.component';
 import { Overlay } from '@core/models/overlay.model';
@@ -7,7 +7,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { ContactFormComponent } from '@components/forms/contact-form/contact-form.component';
-import { NgOptimizedImage } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
 import { OverlayApiService } from '@services/overlay-api.service';
 
 @Component({
@@ -37,10 +37,14 @@ export class HomeFeatureComponent {
   constructor(
     private overlayApiService: OverlayApiService,
     private http: HttpClient,
-    private toast: HotToastService
+    private toast: HotToastService,
+    @Inject(DOCUMENT) private document: Document,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.projects = this.overlayApiService.data;
-    this.windowWidth = window.innerWidth;
+    if (isPlatformBrowser(this.platformId)) {
+      this.windowWidth = window.innerWidth;
+    }
 
     effect(() => {
       if (this.projects().length === 0) {
@@ -51,7 +55,9 @@ export class HomeFeatureComponent {
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
-    this.windowWidth = window.innerWidth;
+    if (isPlatformBrowser(this.platformId)) {
+      this.windowWidth = window.innerWidth;
+    }
   }
 
   onSubmit(form: FormGroup) {
